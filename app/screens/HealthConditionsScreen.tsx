@@ -93,10 +93,10 @@ const HealthConditionsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 50,
+    paddingBottom: 150,
     backgroundColor: theme.colors.background,
     paddingHorizontal: 20,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   card: {
     backgroundColor: theme.colors.surface,
