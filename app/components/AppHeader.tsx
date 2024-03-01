@@ -91,7 +91,7 @@ import {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.primary,
       paddingTop: 50,
       padding: 15,
       width: "100%"
