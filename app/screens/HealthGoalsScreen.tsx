@@ -32,6 +32,10 @@ const HealthGoalsScreen = () => {
   };
 
   const toggleGoal = (goal: String) => {
+    if (goal === usersGoal) {
+      setUsersGoal(null);
+      return;
+    }
     setUsersGoal(goal);
   };
   
@@ -65,7 +69,11 @@ const HealthGoalsScreen = () => {
             </TouchableOpacity>
           ))}
         <TouchableOpacity style={styles.button} onPress={navigateToHomePage}>
+        {usersGoal === null ? (
+            <Text style={styles.buttonText}>I'm not sure yet</Text>
+          ) : (
             <Text style={styles.buttonText}>Next</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
