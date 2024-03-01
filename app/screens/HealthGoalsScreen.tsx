@@ -27,12 +27,12 @@ const HealthGoalsScreen = () => {
   });
 
   const navigateToHomePage = () => {
-    navigation.navigate("HealthGoals");
+    navigation.navigate("AppTabNavigator");
   };
 
   const toggleGoal = (goal: String) => {
     if (goal === usersGoal) {
-      setUsersGoal(null);
+      setUsersGoal(null);                                                                                                                                                                                                                     
       return;
     }
     setUsersGoal(goal);
