@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
-  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -53,7 +52,6 @@ const HealthConditionsScreen = () => {
 
   const doesUserHaveCondition = (condition: String) => {
     if (tempCurrUser.healthConditions == null) {
-      Alert.alert("Dev Error", "Remember to change tempCurrUser to currUser");
       return false;
     }
 
