@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ActivityIndicator, Platform, TextInput, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ActivityIndicator, Platform, TextInput } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -22,7 +22,6 @@ const Login = () => {
 
   const signIn = ()  => {
     navigateToHealthConditions();
-    Alert.alert("Dev Error!", "Sign in not implemented")
   }
 
   const handleSignUp = () => {

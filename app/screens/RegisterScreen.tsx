@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -33,7 +32,6 @@ const RegisterScreen = () => {
 
   const signUp = () => {
     navigateToHealthConditions();
-    Alert.alert("Dev Error!", "Register not implemented.");
   };
 
   const handleLogin = () => {
