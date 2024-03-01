@@ -15,8 +15,10 @@
     "@react-navigation/native-stack": "^6.9.22",
     "@react-navigation/stack": "^6.3.25",
     "@rneui/base": "^4.0.0-rc.8",
+    "cors": "^2.8.5",
     "expo": "~50.0.8",
     "expo-status-bar": "~1.11.1",
+    "express": "^4.18.3",
     "react": "18.2.0",
     "react-native": "0.73.4",
     "react-native-vector-icons": "^10.0.3",
@@ -25,7 +27,8 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "^18.2.61",
-    "@types/react-native-vector-icons": "^6.4.18"
+    "@types/react-native-vector-icons": "^6.4.18",
+    "nodemon": "^3.1.0"
   },
   "private": true
 }
