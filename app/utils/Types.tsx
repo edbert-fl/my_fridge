@@ -7,8 +7,8 @@ export interface User {
   email: string,              // email format
   salt: string,
   createdAt: Date
-  healthConditions?: String[],   // comma seperated values: diabetes, lactose intolerance
-  healthGoals?: String[],        // comma seperated values: lose weight, build muscle, eat healthier
+  healthConditions?: String[] | null,   // comma seperated values: diabetes, lactose intolerance
+  healthGoals?: String[] | null,        // comma seperated values: lose weight, build muscle, eat healthier
 }
 
 export interface Item {
