@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StyleSheet,
-  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -14,16 +13,20 @@ import { commonStyles, theme } from "../utils/Styles";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 const HealthConditionsScreen = () => {
-  const [conditions, setConditions] = useState<String[]>(["Diabetes", "Hypertension", "Obesity"]);
+  const [conditions, setConditions] = useState<String[]>([
+    "Diabetes",
+    "Hypertension",
+    "Obesity",
+  ]);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [tempCurrUser, setTempCurrUser] = useState<User>({
     userID: 69,
     username: "Mary Jane",
-    email: "mary.jane@gmail.com",              // email format
+    email: "mary.jane@gmail.com", // email format
     salt: "some_salt",
     createdAt: new Date(),
     healthConditions: null,
-    healthGoals:  null,
+    healthGoals: null,
   });
 
   const navigateToHealthGoals = () => {
@@ -32,25 +35,23 @@ const HealthConditionsScreen = () => {
 
   const toggleCondition = (condition: String) => {
     if (tempCurrUser.healthConditions == null) {
-      setTempCurrUser({...tempCurrUser, healthConditions: [condition]});
+      setTempCurrUser({ ...tempCurrUser, healthConditions: [condition] });
       return;
     }
-  
+
     if ((tempCurrUser.healthConditions as String[]).includes(condition)) {
       const updatedConditions = tempCurrUser.healthConditions.filter(
         (item: String) => item !== condition
       );
-      setTempCurrUser({...tempCurrUser, healthConditions: updatedConditions});
+      setTempCurrUser({ ...tempCurrUser, healthConditions: updatedConditions });
     } else {
       const updatedConditions = [...tempCurrUser.healthConditions, condition];
-      setTempCurrUser({...tempCurrUser, healthConditions: updatedConditions});
+      setTempCurrUser({ ...tempCurrUser, healthConditions: updatedConditions });
     }
   };
-  
 
   const doesUserHaveCondition = (condition: String) => {
     if (tempCurrUser.healthConditions == null) {
-      Alert.alert("Dev Error", "Remember to change tempCurrUser to currUser");
       return false;
     }
 
@@ -64,26 +65,33 @@ const HealthConditionsScreen = () => {
     <SafeAreaView style={commonStyles.safeAreaView}>
       <View style={styles.container}>
         <View style={styles.headingContainer}>
-          <Text style={styles.heading}>Do you have any of these conditions?</Text>
+          <Text style={styles.heading}>
+            Do you have any of these conditions?
+          </Text>
         </View>
-          {conditions.map((condition: String) => (
-            <TouchableOpacity
-              style={styles.selectConditionButton}
-              onPress={() => toggleCondition(condition)}
-              key={conditions.indexOf(condition)}
-            >
-              <View style={styles.selectConditionContainer}>
-                <Text style={styles.text}>{condition}</Text>
-                {doesUserHaveCondition(condition) == true ? (
-                  <Icon name="check" size={32} color={theme.colors.primary} />
-                ) : (
-                  <Icon name="check" size={32} color="transparent" />
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
+        {conditions.map((condition: String) => (
+          <TouchableOpacity
+            style={styles.selectConditionButton}
+            onPress={() => toggleCondition(condition)}
+            key={conditions.indexOf(condition)}
+          >
+            <View style={styles.selectConditionContainer}>
+              <Text style={styles.text}>{condition}</Text>
+              {doesUserHaveCondition(condition) == true ? (
+                <Icon name="check" size={32} color={theme.colors.primary} />
+              ) : (
+                <Icon name="check" size={32} color="transparent" />
+              )}
+            </View>
+          </TouchableOpacity>
+        ))}
         <TouchableOpacity style={styles.button} onPress={navigateToHealthGoals}>
+          {tempCurrUser.healthConditions === null ||
+          tempCurrUser.healthConditions?.length === 0 ? (
+            <Text style={styles.buttonText}>None of these apply</Text>
+          ) : (
             <Text style={styles.buttonText}>Next</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -123,12 +131,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 15,
     marginTop: 70,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   text: {
     fontSize: 32,
@@ -140,7 +148,7 @@ const styles = StyleSheet.create({
   },
   headingContainer: {
     marginBottom: 30,
-    padding: 10
+    padding: 10,
   },
 });
 

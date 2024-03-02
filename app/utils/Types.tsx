@@ -28,17 +28,33 @@ export interface Receipt {
   receiptID: number,
   store: string,
   dateOfPurchase: Date,
-  totalSpent: number,
   healthRating: number
+}
+
+export interface Promo {
+  promoId: number,
+  store:string,
+  promotion: string,
+  duration: string,
+  dateOfEnding: Date
+}
+
+export interface BoundingBox {
+  x: number,
+  y: number,
+  width: number,
+  height:number
 }
 
 // Navigation Props
 
-export type RootBottomTabParamList = {
+export type TabParamList = {
   Home: undefined;
-  ClockIn: undefined;
-  Schedule: undefined;
-}
+  ReceiptHistory: undefined;
+  Scanner: undefined;
+  Notification: undefined;
+  Profile: undefined;
+};
 
 export type RootStackParamList = {
   Login: undefined;

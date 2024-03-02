@@ -14,8 +14,8 @@ const AuthStackNavigator = () => {
   const { currUser } = useAppContext();
 
   return (
-    <Stack.Navigator initialRouteName="AuthApp">
-      {currUser ? (
+    <Stack.Navigator initialRouteName="Login">
+      {currUser !== null ? (
         <Stack.Screen
           name="AppTabNavigator"
           component={AppTabNavigator}
