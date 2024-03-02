@@ -14,13 +14,13 @@ const ScanningOverlay = () => {
       Animated.sequence([
         Animated.timing(animation, {
           toValue: 1,
-          duration: 1500,
+          duration: 3500,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(animation, {
           toValue: 0,
-          duration: 1500,
+          duration: 3500,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
@@ -33,7 +33,7 @@ const ScanningOverlay = () => {
       {
         translateY: animation.interpolate({
           inputRange: [0, 1],
-          outputRange: [-100, 650], // Probably should change based on device
+          outputRange: [-1000, 650], // Probably should change based on device
         }),
       },
     ],

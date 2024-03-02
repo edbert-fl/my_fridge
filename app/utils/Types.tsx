@@ -32,6 +32,13 @@ export interface Receipt {
   healthRating: number
 }
 
+export interface BoundingBox {
+  x: number,
+  y: number,
+  width: number,
+  height:number
+}
+
 // Navigation Props
 
 export type TabParamList = {

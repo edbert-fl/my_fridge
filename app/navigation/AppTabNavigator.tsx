@@ -102,7 +102,7 @@ const AppTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => tabBarIcon(focused, route),
-        tabBarShowLabel: getTabBarVisibility(route),
+        tabBarShowLabel: false,
         tabBarStyle: {
           opacity: getTabBarVisibility(route) ? 1 : 0,
           borderTopLeftRadius: 20,
