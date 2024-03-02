@@ -34,11 +34,13 @@ export interface Receipt {
 
 // Navigation Props
 
-export type RootBottomTabParamList = {
+export type TabParamList = {
   Home: undefined;
-  ClockIn: undefined;
-  Schedule: undefined;
-}
+  ReceiptHistory: undefined;
+  Scanner: undefined;
+  Notification: undefined;
+  Profile: undefined;
+};
 
 export type RootStackParamList = {
   Login: undefined;
