@@ -136,14 +136,13 @@ const ItemScreen = () => {
     setData(updatedData);
     setPopupVisible(false);
   };
-  const items_name = <Text style={styles.header}>Items</Text>;
   return (
     <View style={styles.container}>
       <AppHeader
-        title={items_name}
-        onBackPress={() => navigation.goBack()} // TODO
-        onRightPress={() => navigation.goBack()} // TODO
-        onBackIcon=<Icon name="undo" size={20} color={theme.colors.accent} />
+        title={"Items"}
+        // TODO
+        // TODO
+        onBackIcon={<Icon name="undo" size={20} color={theme.colors.accent} />}
       />
       <SafeAreaView style={commonStyles.safeAreaView}>
         {/*Image*/}
@@ -235,7 +234,7 @@ const ItemScreen = () => {
               width: 130,
               borderRadius: 10,
             }}
-            onPress={() => navigation.goBack()} // TODO
+            // TODO
           />
           <Button
             title={"Trash"}
