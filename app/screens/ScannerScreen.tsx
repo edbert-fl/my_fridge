@@ -14,13 +14,13 @@ import axios, { AxiosResponse } from "axios";
 import FormData from "form-data";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { SERVER_URL } from "../utils/Helpers";
-import LoadingScreen from "../components/LoadingOverlay";
 import ScanningOverlay from "../components/ScanningAnimation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { BoundingBox, Item, Receipt, TabParamList, User } from "../utils/Types";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import BoundingBoxOverlay from "../components/BoundingBoxOverlay";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const ScannerScreen = () => {
   const cameraRef = useRef(null);
@@ -179,7 +179,10 @@ const ScannerScreen = () => {
     setLoading(true);
     const picture = await takePicture();
     const response = await sendReceiptToServer(picture as string);
-    console.log(response);
+
+    // Make a call to create a receipt
+    // Make a call to add all items in the receipt into the database
+    // Navigate to the ItemScreen and only show items inside that receipt.
     } catch (error) {
       console.log("Error reading receipt", error);
     } finally {
@@ -279,7 +282,7 @@ const ScannerScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <LoadingScreen loading={loading} />
+      <LoadingOverlay loading={true} />
     </View>
   );
 };

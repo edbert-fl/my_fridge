@@ -3,7 +3,6 @@ import {
     StyleSheet,
     Dimensions,
     Animated,
-    ActivityIndicator,
   } from "react-native";
   import React, {
     useEffect,
@@ -11,14 +10,15 @@ import {
     useState,
   } from "react";
   import { theme } from "../utils/Styles";
+import LoadingAnimation from "./LoadingAnimation";
   
   const WINDOW_INNER_WIDTH = Dimensions.get("window").width;
   
-  interface FormEditPopupInterface {
+  interface LoadingOverlayInterface {
     loading: boolean;
   }
   
-  const FormEditPopup: React.FC<FormEditPopupInterface> = ({ loading }) => {
+  const LoadingOverlay: React.FC<LoadingOverlayInterface> = ({ loading }) => {
     const [loadingOpen, setLoadingOpen] = useState<Boolean>(false);
     const backgroundFadeAnim = useRef(new Animated.Value(0)).current;
     const ANIMATION_DURATION = 100;
@@ -58,7 +58,7 @@ import {
                 opacity: backgroundFadeAnim,
               }}
             >
-              <ActivityIndicator size={48} color={theme.colors.primary} />
+              <LoadingAnimation/>
             </Animated.View>
           </View>
         ) : null}
@@ -113,4 +113,4 @@ import {
     },
   });
   
-  export default FormEditPopup;
+  export default LoadingOverlay;

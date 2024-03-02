@@ -1,11 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import {
-  View,
-  TouchableOpacity,
-  Text,
-  Platform,
-  ActivityIndicator,
-} from "react-native";
+import { Platform, ActivityIndicator, Text } from "react-native";
 import LottieView from "lottie-react-native";
 import { theme } from "../utils/Styles";
 
@@ -18,7 +12,7 @@ const LoadingAnimation = () => {
     }
   }, []);
 
-  return Platform.OS === "ios" ? (
+  return (
     <>
       <LottieView
         ref={(animation) => (animationRef.current = animation)}
@@ -33,8 +27,6 @@ const LoadingAnimation = () => {
         loop={true}
       />
     </>
-  ) : (
-    <ActivityIndicator size="large" color={theme.colors.primary} />
   );
 };
 

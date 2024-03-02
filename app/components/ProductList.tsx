@@ -44,9 +44,3 @@ const ProductList: React.FC<ProductListProps> = ({ items }) => {
 };
 
 export default ProductList;
-
-const styles = StyleSheet.create({
-  ProductContainer: {
-
-  }
-});

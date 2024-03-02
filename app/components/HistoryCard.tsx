@@ -1,46 +1,41 @@
-import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import { Item } from "../utils/Types";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { Receipt } from "../utils/Types";
 
 interface ProductCardProps {
-  item: Item;
+  receipt: Receipt;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
-    const leafRatingOptions = [1, 2, 3, 4, 5];
-    const [leafRating, setleafRating] = useState(item.healthRating);
-
+const HistoryCard: React.FC<ProductCardProps> = ({ receipt }) => {
+  const leafRatingOptions = [1, 2, 3, 4, 5];
+  const [leafRating, setleafRating] = useState(receipt.healthRating);
 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <View style={styles.image}></View>
-        </View>
         <View style={styles.rightContainer}>
           <View>
-            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.storeName}>{receipt.store}</Text>
           </View>
           <View>
-            <Text style={styles.expiryDate}>
-              Expires {item.expiryDate.toLocaleDateString()}
+            <Text style={styles.dateOfPurchase}>
+              {receipt.dateOfPurchase.toLocaleDateString()}
             </Text>
           </View>
           <View>
             <Text>Health Rating </Text>
             <View style={styles.leafs}>
               {leafRatingOptions.map((option) => (
-                    <MaterialIcons
-                      name={leafRating >= option ? "eco" : "eco"}
-                      size={25}
-                      style={
-                        leafRating >= option
-                          ? styles.leafSelected
-                          : styles.leafUnselected
-                      }
-                    />
+                <MaterialIcons
+                  name={leafRating >= option ? "eco" : "eco"}
+                  size={25}
+                  style={
+                    leafRating >= option
+                      ? styles.leafSelected
+                      : styles.leafUnselected
+                  }
+                />
               ))}
             </View>
           </View>
@@ -53,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
 const styles = StyleSheet.create({
   mainContainer: {
     width: "100%",
-    height: 120,
+    height: 115,
     display: "flex",
     marginBottom: 20,
     justifyContent: "center",
@@ -103,15 +98,16 @@ const styles = StyleSheet.create({
     paddingBottom: 11,
   },
 
-  itemName: {
-    marginBottom: 10,
+  storeName: {
+    marginBottom: 3,
     fontWeight: "bold",
     // textDecorationLine: "underline",
-    fontSize: 17,
+    fontSize: 18,
   },
 
-  expiryDate: {
+  dateOfPurchase: {
     marginBottom: 5,
+    fontWeight: "bold",
   },
 
   leafs: {
@@ -128,4 +124,4 @@ const styles = StyleSheet.create({
   // Animation
 });
 
-export default ProductCard;
+export default HistoryCard;
