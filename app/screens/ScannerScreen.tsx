@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 import { theme } from "../utils/Styles";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import FormData from "form-data";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { SERVER_URL } from "../utils/Helpers";
@@ -18,8 +18,8 @@ import LoadingScreen from "../components/LoadingOverlay";
 import ScanningOverlay from "../components/ScanningAnimation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { BoundingBox, TabParamList } from "../utils/Types";
-import ImageManipulator from 'expo-image-manipulator';
+import { BoundingBox, Item, Receipt, TabParamList, User } from "../utils/Types";
+import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import BoundingBoxOverlay from "../components/BoundingBoxOverlay";
 
 const ScannerScreen = () => {
@@ -30,8 +30,24 @@ const ScannerScreen = () => {
     boolean | null
   >(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
-  const [bbox, setBbox] = useState<BoundingBox>({ x: 0, y: 0, width: 0, height: 0 });
+  const [bbox, setBbox] = useState<BoundingBox>({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
   const [loading, setLoading] = useState(false);
+  const [receiptData, setReceiptData] = useState<Receipt | null>(null);
+  const [items, setItems] = useState<Item[] | null>();
+  const [tempCurrUser, setTempCurrUser] = useState<User>({
+    userID: 69,
+    username: "Mary Jane",
+    email: "mary.jane@gmail.com",              
+    salt: "some_salt",
+    createdAt: new Date(),
+    healthConditions: null,
+    healthGoals:  null,
+  });
 
   useEffect(() => {
     requestPermissions();
@@ -39,11 +55,11 @@ const ScannerScreen = () => {
   }, []);
 
   const handleBoundingBoxSelection = () => {
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
+    const windowWidth = Dimensions.get("window").width;
+    const windowHeight = Dimensions.get("window").height;
 
-    const width = 0.8 * windowWidth; 
-    const height = 0.4 * windowHeight; 
+    const width = 0.8 * windowWidth;
+    const height = 0.4 * windowHeight;
 
     const x = (windowWidth - width) / 2;
     const y = (windowHeight - height) / 6;
@@ -53,15 +69,13 @@ const ScannerScreen = () => {
 
   const cropImage = async (imageUri: string) => {
     const { x, y, width, height } = bbox;
-    const croppedImage = await ImageManipulator.manipulateAsync(
+    const croppedImage = await manipulateAsync(
       imageUri,
       [{ crop: { originX: x, originY: y, width, height } }],
-      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+      { compress: 1, format: SaveFormat.JPEG }
     );
     return croppedImage.uri;
   };
-  
-  
 
   const navigation = useNavigation<StackNavigationProp<TabParamList>>();
 
@@ -104,11 +118,23 @@ const ScannerScreen = () => {
         throw new Error("Failed to upload file to the server");
       }
 
+      let textFromImage = "";
       response.data.textFromImage.forEach((line: string) => {
-        console.log(line);
+        textFromImage += line; 
       });
 
-      return response.data;
+      const requestData = {
+        receiptData: textFromImage,
+        healthGoals: tempCurrUser.healthGoals,
+        healthConditions: tempCurrUser.healthConditions
+      };
+      
+      const receiptScanResponse = await axios.post(`${SERVER_URL}/receipt/scan`, requestData)
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+      return (receiptScanResponse as AxiosResponse<any, any>).data;
     } catch (error: unknown) {
       console.error("Error:", error);
       return false;
@@ -130,9 +156,9 @@ const ScannerScreen = () => {
       const photo = await (cameraRef.current as Camera).takePictureAsync(
         options
       );
-      const croppedImage = await cropImage(photo.uri)
-      setCapturedPhoto(croppedImage);
-      return croppedImage;
+      // const croppedImage = await cropImage(photo.uri)
+      setCapturedPhoto(photo.uri);
+      return photo.uri;
     } else {
       console.error("Camera handle is null");
       return null;
@@ -144,14 +170,21 @@ const ScannerScreen = () => {
     setHasCameraPermission(cameraPermission.status === "granted");
   };
 
-  if (hasCameraPermission === null) {
-  } else if (!hasCameraPermission) {
+  if (!hasCameraPermission) {
     Alert.alert("Error!", "No Access to Camera!");
   }
 
   const readReceipt = async () => {
+    try {
+    setLoading(true);
     const picture = await takePicture();
-    const response = sendReceiptToServer(picture as string);
+    const response = await sendReceiptToServer(picture as string);
+    console.log(response);
+    } catch (error) {
+      console.log("Error reading receipt", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -159,7 +192,10 @@ const ScannerScreen = () => {
       {Platform.OS === "ios" ? (
         <>
           <View style={styles.cameraButtonContainer}>
-            <Pressable style={styles.scannerHeaderButton} onPress={navigateToHomeScreen}>
+            <Pressable
+              style={styles.scannerHeaderButton}
+              onPress={navigateToHomeScreen}
+            >
               <Icon
                 name="arrow-back"
                 size={24}
@@ -195,10 +231,10 @@ const ScannerScreen = () => {
             type={type}
             ref={cameraRef}
             flashMode={flashOn ? FlashMode.on : FlashMode.off}
-            useCamera2Api 
+            useCamera2Api
             autoFocus
           >
-            <BoundingBoxOverlay boundingBox={bbox}/>
+            <BoundingBoxOverlay boundingBox={bbox} />
           </Camera>
         </>
       ) : (
@@ -207,10 +243,13 @@ const ScannerScreen = () => {
           type={type}
           ref={cameraRef}
           flashMode={flashOn ? FlashMode.on : FlashMode.off}
-          useCamera2Api 
+          useCamera2Api
           autoFocus
         >
-          <Pressable style={styles.scannerHeaderButton} onPress={navigateToHomeScreen}>
+          <Pressable
+            style={styles.scannerHeaderButton}
+            onPress={navigateToHomeScreen}
+          >
             <Icon name="arrow-back" size={24} color={theme.colors.background} />
           </Pressable>
           {flashOn ? (
@@ -226,7 +265,7 @@ const ScannerScreen = () => {
               />
             </Pressable>
           )}
-          <BoundingBoxOverlay boundingBox={bbox}/>
+          <BoundingBoxOverlay boundingBox={bbox} />
         </Camera>
       )}
       <ScanningOverlay />
@@ -289,7 +328,7 @@ export const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 20,
     backgroundColor: theme.colors.background,
-    zIndex: 99
+    zIndex: 2,
   },
   scannerHeaderButton: {
     backgroundColor: theme.colors.faded,
