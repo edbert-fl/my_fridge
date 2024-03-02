@@ -35,7 +35,7 @@ export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
     name: "Noodle",
     quantity: 2,
     weight: null,
-    expiryDate: new Date(),
+    expiryDate: new Date(2024, 2, 25),
     price: 3,
     healthRating: 4,
     healthComment: "Noodles are good for you.",
