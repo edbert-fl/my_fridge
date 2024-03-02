@@ -25,7 +25,6 @@ const Login = () => {
   };
 
   const signIn = async ()  => {
-    navigateToHealthConditions();
     setLoading(true);
     try {
       const response = await axios.post(`${SERVER_URL}/user/login`, {
