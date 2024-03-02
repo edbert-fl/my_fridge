@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Text,View } from "react-native";
 import React from "react";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../context/AppContext";
@@ -8,7 +8,10 @@ import {
   ParamListBase,
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { AntDesign } from '@expo/vector-icons';
 import HomeScreen from "../screens/HomeScreen";
+import { Ionicons,Feather, Octicons, MaterialIcons } from '@expo/vector-icons';
+
 import ReceiptHistoryScreen from "../screens/ReceiptHistoryScreen";
 import ScannerScreen from "../screens/ScannerScreen";
 import NotificationScreen from "../screens/NotificationScreen";
@@ -51,22 +54,22 @@ const AppTabNavigator = () => {
         size: 32,
       },
       ReceiptHistory: {
-        name: "home",
+        name: "receipt-outline",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Scanner: {
-        name: "home",
+        name: "camera",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
-        size: 32,
+        size: 60,
       },
       Notification: {
-        name: "home",
+        name: "bell",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Profile: {
-        name: "home",
+        name: "profile",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
@@ -86,15 +89,33 @@ const AppTabNavigator = () => {
       : theme.colors.placeholderText;
 
     return (
-      <Text
-        style={{
-          color: textColor,
-          fontSize: 12,
-          fontWeight: "500",
-        }}
-      >
-        {route.name}
-      </Text>
+      // <Text
+      //   style={{
+      //     color: textColor,
+      //     fontSize: 12,
+      //     fontWeight: "500",
+      //     marginTop:60,
+      //     margin:"auto",
+      //     position:"relative"
+      //   }}
+      // >
+      //   {route.name}
+      // </Text>
+      <View style={{ alignItems: 'center', display:"flex", position:"absolute" }}>
+      <View style={{  alignItems: 'center',width:route.name === 'Scanner' ? "180%" : "100%" }}>
+        {/* <Icon name={iconMappings[route.name].name} size={iconMappings[route.name].size} color={iconMappings[route.name].color} /> */}
+        <Text
+          style={{
+            color: textColor,
+            fontSize: 10, // Adjust font size as needed
+            fontWeight: "500",
+            marginTop: 60, // Adjust margin to create space between icon and text
+          }}
+        >
+          {route.name}
+        </Text>
+      </View>
+    </View>
     );
   };
 
@@ -116,35 +137,48 @@ const AppTabNavigator = () => {
           height: 100,
           paddingTop: 5,
           borderTopWidth: 0,
+          zIndex:10,
+          activeTintColor: 'white',
+          inactiveTintColor: '#d9d9d9',
+
         },
         tabBarLabel: ({ focused }) => tabBarLabel(focused, route),
       })}
       initialRouteName="Home"
     >
       <Tab.Screen
-        name="Home"
+        name={"Home"}
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false,
+            tabBarIcon: ({focused}) => <AntDesign name="home" size={24} color={focused ? theme.colors.primary : theme.colors.accent} />
+        }}
       />
       <Tab.Screen
         name="ReceiptHistory"
         component={ReceiptHistoryScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false,
+          tabBarIcon: ({focused}) => <Ionicons name="receipt-outline" size={24} color={focused ? theme.colors.primary  : theme.colors.accent} />
+        }}
       />
       <Tab.Screen
         name="Scanner"
         component={ScannerScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false,
+        tabBarButton: (focused) => <MaterialIcons onPress={()=>console.log("pressed")} name="camera" size={70} color={focused ? theme.colors.primary  : theme.colors.accent} style={{marginTop: 20}} /> }}
       />
       <Tab.Screen
         name="Notification"
         component={NotificationScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false ,
+          tabBarIcon: ({focused}) => <Feather name="bell" size={24} color={focused ? theme.colors.primary  : theme.colors.accent}  />
+        }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false,
+          tabBarIcon: ({focused}) => <Octicons name="person" size={24} color={focused ? theme.colors.primary  : theme.colors.accent } />
+        }}
       />
     </Tab.Navigator>
   );
