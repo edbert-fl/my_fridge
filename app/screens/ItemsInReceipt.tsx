@@ -7,20 +7,7 @@ import ProductList from "../components/ProductList";
 import { theme } from "../utils/Styles";
 import { Item } from "../utils/Types";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-}
-
 export const ItemsInReceipt = () => {
-  const [products, setProducts] = useState<Item[]>([]);
-
-  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
-
   // TODO: DELETE AFTER
   const burger: Item = {
     itemID: 1,
@@ -40,7 +27,7 @@ export const ItemsInReceipt = () => {
     name: "Noodle",
     quantity: 2,
     weight: null,
-    expiryDate: new Date(),
+    expiryDate: new Date(2024, 2, 25),
     price: 3,
     healthRating: 4,
     healthComment: "Noodles are good for you.",
@@ -58,7 +45,32 @@ export const ItemsInReceipt = () => {
     healthComment: "Noodles are good for you.",
   };
 
+  const sortItems = (items: Item[]) => {
+    let x;
+    let swap = true;
+    while (swap == true) {
+      for(let i = 0; i < items.length - 1; i++) {
+        if(items[i].expiryDate > items[i + 1].expiryDate) {
+          x = items[i];
+          items[i] = items[i + 1];
+          items[i + 1] = x;
+          swap = true;
+          break;
+        }
+        else {
+          swap = false;
+        }
+      }
+    }
+    return items
+  }
+
   const listOfItems: Item[] = [noodle, burger, chicken];
+  const [products, setProducts] = useState<Item[]>(sortItems(listOfItems));
+
+  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
+  const [search, setSearch] = useState("");
+
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
@@ -86,7 +98,7 @@ export const ItemsInReceipt = () => {
 
   const updateSearch = (items: Item[], text: string) => {
     if (text.valueOf() === "") {
-      setFilteredProducts(products);
+      setProducts(products);
     } else {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
@@ -96,6 +108,8 @@ export const ItemsInReceipt = () => {
 
     setSearch(text);
   };
+
+  
 
   return (
     <View style={styles.background}>
@@ -116,7 +130,7 @@ export const ItemsInReceipt = () => {
         style={{ backgroundColor: theme.colors.background }}
       >
         {/* TODO: CHANGE THIS TO PRODUCTS/FILTERED PRODUCTS */}
-        <ProductList items={listOfItems} />
+        <ProductList items={products} />
       </ScrollView>
     </View>
   );
