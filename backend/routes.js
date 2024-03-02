@@ -16,20 +16,35 @@ module.exports.initializeRoutes = (app) => {
     })
 
     app.post("/user/login", async function(req, res) {
-        const { currUser } = req.body;
+        const { email, password } = req.body;
         let client;
 
         try {
             client = await pool.connect();
             const result = await client.query(
-                "SELECT * FROM USERS WHERE userID = $1",
-                [currUser.userID,]
+                "SELECT * FROM USERS WHERE email = $1",
+                [email]
             );
-            console.log("Resulting Data:", result.rows[0]);
-            res.json({
-                user: result.rows[0],
-                message: "User login successfully!",
-            })
+            const userResultData = userResult.rows[0];
+            if (userResult.rows.length === 1) {
+                const storedHashedPassword = userResultData.hashedPassword;
+                const salt = userResultData.salt;
+
+                const hashedInputPassword = await bcrypt.hash(password, salt);
+
+                console.log(userResultData);
+
+                if (hashedInputPassword === storedHashedPassword) {
+                    res.json({
+                        user: userResultData,
+                        message: "Authentication successful!",
+                    });
+                } else {
+                    res.status(401).json({error: "Authentication failed"});
+                }
+            } else {
+                res.status(404).json({error: "User not found"});
+            }
         } catch (error) {
             console.log("Error logging in user", error);
             res.status(500).json({error: "Internal Server Error", details: error.message});
