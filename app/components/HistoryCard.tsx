@@ -24,11 +24,7 @@ const HistoryCard: React.FC<ProductCardProps> = ({ receipt }) => {
             </Text>
           </View>
           <View>
-<<<<<<< HEAD
             <Text>Health Rating </Text>
-=======
-            <Text>Health Rating: </Text>
->>>>>>> a61bcad (Edited ItemsInReceipt and added ReceiptHistory)
             <View style={styles.leafs}>
               {leafRatingOptions.map((option) => (
                 <MaterialIcons
@@ -128,8 +124,4 @@ const styles = StyleSheet.create({
   // Animation
 });
 
-<<<<<<< HEAD
 export default HistoryCard;
-=======
-export default HistoryCard;
->>>>>>> a61bcad (Edited ItemsInReceipt and added ReceiptHistory)
