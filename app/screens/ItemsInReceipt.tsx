@@ -1,13 +1,21 @@
+import { RouteProp } from "@react-navigation/core";
 import * as React from "react";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Icon, SearchBar } from "react-native-elements";
 import AppHeader from "../components/AppHeader";
 import ProductList from "../components/ProductList";
 import { theme } from "../utils/Styles";
-import { Item } from "../utils/Types";
+import { Item, ScannerParamList } from "../utils/Types";
 
-export const ItemsInReceipt = () => {
+type ItemsInReceiptRouteProp = RouteProp<ScannerParamList, "ItemsInReceipt">
+
+interface ItemsInReceiptProps {
+  route: ItemsInReceiptRouteProp
+}
+
+export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
+  const { receiptID } = route.params;
+  
   // TODO: DELETE AFTER
   const burger: Item = {
     itemID: 1,
@@ -62,7 +70,7 @@ export const ItemsInReceipt = () => {
         }
       }
     }
-    return items
+    return items;
   }
 
   const listOfItems: Item[] = [noodle, burger, chicken];
@@ -103,7 +111,8 @@ export const ItemsInReceipt = () => {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
       );
-      setProducts(filtered);
+      setProducts(sortItems(filtered));
+      
     }
 
     setSearch(text);
