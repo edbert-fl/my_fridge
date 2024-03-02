@@ -125,6 +125,7 @@ const AppTabNavigator = () => {
         tabBarIcon: ({ focused }) => tabBarIcon(focused, route),
         tabBarShowLabel: false,
         tabBarStyle: {
+          backgroundColor: "white",
           opacity: getTabBarVisibility(route) ? 1 : 0,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
@@ -143,6 +144,10 @@ const AppTabNavigator = () => {
 
         },
         tabBarLabel: ({ focused }) => tabBarLabel(focused, route),
+      //   headerStyle:{
+      //     backgroundColor:"white",
+          
+      // },
       })}
       initialRouteName="Home"
     >

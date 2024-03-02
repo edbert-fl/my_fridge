@@ -4,43 +4,56 @@ import { MainHeader } from '../components/MainHeader'
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { SearchBar } from "react-native-elements";
-// import SearchScreen from "./SearchScreen";
+import { data } from '../utils/defaultGoals';
+
 import { theme } from '../utils/Styles';
 import { Item, Promo } from '../utils/Types';
+import { BackgroundImage } from 'react-native-elements/dist/config';
 const HomeScreen = () => {
-  const [search, setSearch] = useState("");
   const [fridgeItems, setFridgeItems] = useState<Item[]>([]);
   const [currentPromos, setCurrentPromos] = useState<Promo[]>([])
   // make new feature to scan nutrition value as well.
+
+  const currImg = (goal:string) => (
+    goal === "Lose Weight" ?
+     <Image source={require("../../assets/loseweight_bg.jpg")} style={styles.categoryImage} /> 
+     : goal === "Gain Muscle/Bulking" 
+     ? <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} /> 
+     : <Image source={require("../../assets/diseaseprevention_bg.jpg")} style={styles.categoryImage} />
+  )
+
   return (
-    <ScrollView>
+    <ScrollView style={{marginTop:40}}>
     <SafeAreaView style={styles.background}>
-        {/* <MainHeader title="MyFridge" > */}
-          <View style={styles.promotionalArtContainer}>
-            {/* <Text>My Fridge</Text> */}
+        
+          <View style={[styles.promotionalArtContainer, {width:330, marginRight:5}]}>
+          <View style={styles.blackBg} />
+          <Image source={require("../../assets/rotd_placeholder.jpg")} style={[styles.categoryImage, {opacity:0.9}]} />
+            <Text style={[styles.goalHeading,{color:"beige", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
+              RECIPE OF
+            </Text>
+            <Text style={[styles.goalHeading,{color:"white", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
+              THE DAY
+            </Text>
           </View>
-        {/* </MainHeader> */}
-        {/* <SearchBar 
-          platform="ios"
-          value={search}
-          inputContainerStyle={{backgroundColor:theme.colors.primary}}
-          inputStyle={{backgroundColor:theme.colors.primary}}
-          onBlur={()=>console.log("blur")}
-          onClear={()=>console.log("clear")}
-          onChangeText={()=> console.log("change")}
-          onPressIn={()=>console.log("pressed")}
-        /> */}
         <Text style={styles.heading}>Your Fridge</Text>
         <View style={styles.categories} >
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
             {fridgeItems.length === 0 ? (
               <View style={{flexDirection:"row"}} >
-                <View style={styles.categoryPlaceholder} />
-                <View style={styles.categoryPlaceholder} />
-                <View style={styles.categoryPlaceholder} />
-                <View style={styles.categoryPlaceholder} />
-
+                
+                <View style={styles.categoryPlaceholder} >
+                  <Image source={require("../../assets/placeholder1.jpg")} style={styles.fridgePlaceholderImg} />
+                </View>
+                <View style={styles.categoryPlaceholder} >
+                <Image source={require("../../assets/placeholder2.jpg")} style={styles.fridgePlaceholderImg} />
+                </View>
+                <View style={styles.categoryPlaceholder} >
+                <Image source={require("../../assets/placeholder3.jpg")} style={styles.fridgePlaceholderImg} />
+                </View>
+                <View style={styles.categoryPlaceholder} >
+                <Image source={require("../../assets/placeholder4.jpg")} style={styles.fridgePlaceholderImg} />
+                </View>
               </View>
             ) : (
               fridgeItems.map((item) => {
@@ -69,12 +82,13 @@ const HomeScreen = () => {
             </View>
           </ScrollView>
         </View>
-        <Text style={styles.heading}>Promotions right now</Text>
-        <View style={{display:"flex", bottom:50}} >
+        <Text style={[styles.heading,{bottom:40}]}>Popular recipes right now</Text>
+        <View style={{display:"flex", bottom:100,height:300}} >
               <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
-                {currentPromos.length === 0 ? (
+                {data.length === 0 ? (
                   <View style={styles.promosContainer} >
                     <View style={styles.promotionalArtContainer} >
+                      <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} />
                       <Text style={styles.heading} >Promotion now</Text>
                     </View>
                     <View style={styles.promotionalArtContainer} >
@@ -85,14 +99,20 @@ const HomeScreen = () => {
                     </View>
                   </View>
                 ):(
-                  currentPromos.map(() => (
-                    <View>
-
-
+                  <View style={styles.promosContainer}>
+                  {data.map((curr_data, i)=> (
+                    <View style={styles.promotionalArtContainer} key={i} >
+                        <View style={styles.blackBg} />
+                        {currImg(curr_data.goal)}
+                        <Text style={styles.goalHeading} >{curr_data.goal}</Text>
+                        <Text style={styles.goalDescription} >{curr_data.desc}</Text>
                     </View>
-                  ))
+                  ) )}
+                  </View>
+                  
                 )}
               </ScrollView>
+              
         </View>
     </SafeAreaView>
     </ScrollView>
@@ -199,8 +219,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   categoryImage: {
-    width: 190,
-    height: "100%",
+    width: "135%",
+    height: "166%",
+    position:"absolute",
+    borderRadius:20,
+    opacity:0.7
   },
   categoryLabel: {
     marginTop: 10,
@@ -209,5 +232,37 @@ const styles = StyleSheet.create({
     color: theme.colors.buttonText,
     fontSize: 20,
   },
+  goalHeading:{
+    fontSize: 24,
+    fontWeight: "bold",
+    marginLeft: 10,
+    color: "beige",
+    zIndex:3
+  },
+  goalDescription:{
+    fontSize: 15,
+    color:"white",
+    marginLeft: 10,
+    zIndex:3,
+    fontWeight:"600",
+    letterSpacing:1,
+    textShadowColor:"black",
+    shadowOpacity:0.8,
+    // textAlign:"justify"
+  },
+  blackBg:{
+    backgroundColor:"black",
+    width: "135%",
+    height: "166%",
+    position:"absolute",
+    borderRadius:20,
+    opacity:0.4
+  },
+  fridgePlaceholderImg:{
+    width: 140,
+    height: 150,
+    borderRadius: 20,
+    position:"absolute"
+  }
 });
 export default HomeScreen
