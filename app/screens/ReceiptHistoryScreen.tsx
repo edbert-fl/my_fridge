@@ -2,12 +2,11 @@ import * as React from "react";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import AppHeader from "../components/AppHeader";
+import HistoryList from "../components/HistoryList";
 import { theme } from "../utils/Styles";
 import { Receipt } from "../utils/Types";
-import HistoryList from "../components/HistoryList";
 
 export const ReceiptHistory = () => {
-  
   const ColesReceipt_1: Receipt = {
     userID: 1,
     receiptID: 1234,
@@ -22,7 +21,7 @@ export const ReceiptHistory = () => {
     store: "Coles",
     dateOfPurchase: new Date(2024, 2, 28),
     healthRating: 3,
-  }
+  };
 
   const ColesReceipt_3: Receipt = {
     userID: 3,
@@ -30,7 +29,7 @@ export const ReceiptHistory = () => {
     store: "Woolsworth",
     dateOfPurchase: new Date(2024, 2, 21),
     healthRating: 4,
-  }
+  };
 
   const receipts = [ColesReceipt_1, ColesReceipt_2, ColesReceipt_3];
 
@@ -38,24 +37,22 @@ export const ReceiptHistory = () => {
     let x;
     let swap = true;
     while (swap == true) {
-      for(let i = 0; i < Receipts.length - 1; i++) {
-        if(Receipts[i].dateOfPurchase > Receipts[i + 1].dateOfPurchase) {
+      for (let i = 0; i < Receipts.length - 1; i++) {
+        if (Receipts[i].dateOfPurchase > Receipts[i + 1].dateOfPurchase) {
           x = Receipts[i];
           Receipts[i] = Receipts[i + 1];
           Receipts[i + 1] = x;
           swap = true;
           break;
-        }
-        else {
+        } else {
           swap = false;
         }
       }
     }
-    return Receipts
-  }
+    return Receipts;
+  };
 
   const [products, setProducts] = useState<Receipt[]>(sortReceipt(receipts));
-
 
   return (
     <View style={styles.background}>

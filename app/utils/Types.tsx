@@ -56,6 +56,12 @@ export type TabParamList = {
   Profile: undefined;
 };
 
+export type ScannerParamList = {
+  Scanner: undefined,
+  ItemsInReceipt: { receiptID: number },
+  ItemScreen: { itemID: number }
+};
+
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
