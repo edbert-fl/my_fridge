@@ -6,6 +6,8 @@ const sharp = require("sharp");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+const {pool} = require("./database");
+
 module.exports.initializeRoutes = (app) => {
   app.get("/api", function (req, res, next) {
     res.json({ msg: "This is CORS-enabled for all origins!" });

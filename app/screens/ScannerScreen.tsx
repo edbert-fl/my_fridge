@@ -6,7 +6,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import { Camera, CameraType } from "expo-camera";
+import { AutoFocus, Camera, CameraType, FlashMode } from "expo-camera";
 import { theme } from "../utils/Styles";
 import axios from "axios";
 import FormData from "form-data";
@@ -14,10 +14,14 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { SERVER_URL } from "../utils/Helpers";
 import LoadingScreen from "../components/LoadingOverlay";
 import ScanningOverlay from "../components/ScanningAnimation";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { TabParamList } from "../utils/Types";
 
 const ScannerScreen = () => {
   const cameraRef = useRef(null);
   const [type, setType] = useState(CameraType.back);
+  const [flashOn, setFlashOn] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
   >(null);
@@ -27,6 +31,12 @@ const ScannerScreen = () => {
   useEffect(() => {
     requestPermissions();
   }, []);
+
+  const navigation = useNavigation<StackNavigationProp<TabParamList>>();
+
+  const navigateToHomeScreen = () => {
+    navigation.navigate("Home");
+  };
 
   const sendReceiptToServer = async (photoUri: string) => {
     try {
@@ -74,6 +84,10 @@ const ScannerScreen = () => {
     }
   };
 
+  const toggleFlash = () => {
+    setFlashOn(!flashOn);
+  };
+
   const takePicture = async () => {
     let options = {
       quality: 1,
@@ -99,7 +113,6 @@ const ScannerScreen = () => {
   };
 
   if (hasCameraPermission === null) {
-    // Alert.alert("Error!", "Camera permission not granted!"); SOMETHING WRONG HERE
   } else if (!hasCameraPermission) {
     Alert.alert("Error!", "No Access to Camera!");
   }
@@ -111,7 +124,76 @@ const ScannerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={cameraRef}></Camera>
+      {Platform.OS === "ios" ? (
+        <>
+          <View style={styles.cameraButtonContainer}>
+            <TouchableOpacity style={styles.backButton} onPress={navigateToHomeScreen}>
+              <Icon
+                name="arrow-back"
+                size={28}
+                color={theme.colors.background}
+              />
+            </TouchableOpacity>
+            {flashOn ? (
+              <TouchableOpacity
+                style={styles.flashButton}
+                onPress={toggleFlash}
+              >
+                <Icon
+                  name="flash-on"
+                  size={28}
+                  color={theme.colors.background}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.flashButton}
+                onPress={toggleFlash}
+              >
+                <Icon
+                  name="flash-off"
+                  size={28}
+                  color={theme.colors.background}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <Camera
+            style={styles.camera}
+            type={type}
+            ref={cameraRef}
+            flashMode={flashOn ? FlashMode.on : FlashMode.off}
+            useCamera2Api 
+            autoFocus
+          ></Camera>
+        </>
+      ) : (
+        <Camera
+          style={styles.camera}
+          type={type}
+          ref={cameraRef}
+          flashMode={flashOn ? FlashMode.on : FlashMode.off}
+          useCamera2Api 
+          autoFocus
+        >
+          <TouchableOpacity style={styles.backButton} onPress={navigateToHomeScreen}>
+            <Icon name="arrow-back" size={28} color={theme.colors.background} />
+          </TouchableOpacity>
+          {flashOn ? (
+            <TouchableOpacity style={styles.flashButton} onPress={toggleFlash}>
+              <Icon name="flash-on" size={28} color={theme.colors.background} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.flashButton} onPress={toggleFlash}>
+              <Icon
+                name="flash-off"
+                size={28}
+                color={theme.colors.background}
+              />
+            </TouchableOpacity>
+          )}
+        </Camera>
+      )}
       <ScanningOverlay />
       <View style={styles.scannerInfoContainer}>
         <TouchableOpacity style={styles.button} onPress={readReceipt}>
@@ -138,13 +220,18 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     width: "100%",
-    borderTopEndRadius: 20,
-    borderTopStartRadius: 20,
     height: "25%",
     paddingTop: theme.spacing.lg,
     paddingHorizontal: theme.spacing.lg,
     backgroundColor: theme.colors.background,
     alignItems: "center",
+  },
+  cameraButtonContainer: {
+    height: "15%",
+    width: "100%",
+    backgroundColor: theme.colors.background,
+    borderBottomEndRadius: 20,
+    borderBottomStartRadius: 20,
   },
   buttonContainer: {
     width: 75,
@@ -160,7 +247,7 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   button: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.accent,
     borderRadius: 70,
     padding: theme.spacing.md,
     marginTop: theme.spacing.md,
@@ -169,6 +256,30 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     width: 80,
     height: 80,
+  },
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 25,
+    backgroundColor: theme.colors.faded,
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  flashButton: {
+    position: "absolute",
+    top: 50,
+    right: 25,
+    backgroundColor: theme.colors.faded,
+    width: 40,
+    height: 40,
+    borderRadius: 40,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   camera: {
     flex: 1,
@@ -181,28 +292,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     overflow: "hidden",
     height: 800,
-  },
-  clockedInStatus: {
-    backgroundColor: theme.colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 110,
-    padding: 10,
-    borderRadius: 8,
-    margin: 10,
-  },
-  onBreakStatus: {
-    backgroundColor: theme.colors.warning,
-    justifyContent: "center",
-    alignItems: "center",
-    width: 110,
-    padding: 10,
-    borderRadius: 8,
-    margin: 10,
-  },
-  clockOutOptions: {
-    display: "flex",
-    flexDirection: "row",
   },
 });
 

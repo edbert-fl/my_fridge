@@ -3,7 +3,10 @@ import React from "react";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../context/AppContext";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { RouteProp, ParamListBase } from "@react-navigation/native";
+import {
+  RouteProp,
+  ParamListBase,
+} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import HomeScreen from "../screens/HomeScreen";
 import ReceiptHistoryScreen from "../screens/ReceiptHistoryScreen";
@@ -25,6 +28,18 @@ const AppTabNavigator = () => {
   const Tab = createBottomTabNavigator();
   const { currUser } = useAppContext();
 
+  const getTabBarVisibility = (route: any) => {
+    const routeName = route.state
+    ? route.state.routes[route.state.index].name
+    : route.name;
+
+    if (routeName === "Scanner") {
+      return false;
+    }
+
+    return true;
+  };
+
   const tabBarIcon = (
     focused: boolean,
     route: RouteProp<ParamListBase, string>
@@ -36,22 +51,22 @@ const AppTabNavigator = () => {
         size: 32,
       },
       ReceiptHistory: {
-        name: "TODO",
+        name: "home",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Scanner: {
-        name: "TODO",
+        name: "home",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Notification: {
-        name: "TODO",
+        name: "home",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Profile: {
-        name: "TODO",
+        name: "home",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
@@ -87,8 +102,9 @@ const AppTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => tabBarIcon(focused, route),
+        tabBarShowLabel: getTabBarVisibility(route),
         tabBarStyle: {
-          backgroundColor: theme.colors.tabBackground,
+          opacity: getTabBarVisibility(route) ? 1 : 0,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           position: "absolute",
@@ -115,7 +131,7 @@ const AppTabNavigator = () => {
         component={ReceiptHistoryScreen}
         options={{ headerShown: false }}
       />
-       <Tab.Screen
+      <Tab.Screen
         name="Scanner"
         component={ScannerScreen}
         options={{ headerShown: false }}
