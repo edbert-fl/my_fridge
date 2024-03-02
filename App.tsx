@@ -64,10 +64,7 @@ export default function App() {
           setCurrUser: setCurrUser,
         }}
       >
-        {/* <AuthStackNavigator /> */}
-        {/* <ProfileScreen/> */}
-        <AppTabNavigator />
-        {/* <MainHeader title="My FRIDGE" /> */}
+        <AuthStackNavigator />
       </AppContext.Provider>
     </NavigationContainer>
   );

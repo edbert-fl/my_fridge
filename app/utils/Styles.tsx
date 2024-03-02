@@ -15,7 +15,7 @@ export const theme = {
     warning: "#FFC107",
     divider: "#E0E0E0",
     imagePlaceholder: "#EEEEEE",
-    faded: "rgba(100, 100, 100, 0.8)",
+    faded: "rgba(100, 100, 100, 0.6)",
   },
   spacing: {
     xs: 4,
