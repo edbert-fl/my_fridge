@@ -1,115 +1,396 @@
-import * as React from "react";
-import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { SearchBar } from "react-native-elements";
+import React, { useState, useEffect, useRef } from "react";
+import type { PropsWithChildren } from "react";
+import {
+  View,
+  TextInput,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  Text,
+  Animated,
+  TouchableWithoutFeedback,
+  Platform,
+  ViewStyle,
+} from "react-native";
+import { commonStyles, theme } from "../utils/Styles";
 import AppHeader from "../components/AppHeader";
-import ProductList from "../components/ProductList";
-import { theme } from "../utils/Styles";
-import { Item } from "../utils/Types";
+import { MaterialIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Button } from "@rneui/base";
+import { useNavigation } from "@react-navigation/native";
 
-export const ItemScreen = () => {
-  const [products, setProducts] = useState<Item[]>([]);
-
-  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
-
-  // TODO: DELETE AFTER
-  const burger: Item = {
-    itemID: 1,
-    receiptID: 1,
-    name: "Hamburger",
-    quantity: 4,
-    weight: null,
+const ItemScreen = () => {
+  const initialdata = {
+    name: "Apple",
+    quantity: 20,
     expiryDate: new Date(),
-    price: 5.2,
-    healthRating: 3,
-    healthComment: "Burgers are not good for you. Eat in moderation.",
-  };
-
-  const noodle: Item = {
-    itemID: 2,
-    receiptID: 2,
-    name: "Noodle",
-    quantity: 2,
-    weight: null,
-    expiryDate: new Date(),
-    price: 3,
+    weight: "3kg",
+    price: 13,
     healthRating: 4,
-    healthComment: "Noodles are good for you.",
+    healthComment:
+      "Apples are not only delicious but also incredibly nutritious. Packed with fiber, vitamins, and antioxidants, they promote good digestive health, lower the risk of chronic diseases like heart disease.",
   };
 
-  const chicken: Item = {
-    itemID: 3,
-    receiptID: 3,
-    name: "Chicken",
-    quantity: 5,
-    weight: null,
-    expiryDate: new Date(2024, 2, 23),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
+  const leafRatingOptions = [1, 2, 3, 4, 5];
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [textInputValue, setTextInputValue] = useState("");
+  const [selectedField, setSelectedField] = useState("");
+  const [data, setData] = useState(initialdata);
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(Platform.OS === "ios");
+  const [leafRating, setleafRating] = useState(data.healthRating);
+  const animatedButtonScale = new Animated.Value(1);
+
+  //DatePicker
+  const onChange = (event: any, selectedDate: Date | undefined) => {
+    const currentDate = selectedDate || date;
+    setShowPicker(Platform.OS === "ios");
+    setDate(currentDate);
   };
 
-  const listOfItems: Item[] = [noodle, burger, chicken];
+  // Edit Popup
+  type FadeInViewProps = PropsWithChildren<{ style: ViewStyle }>;
 
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const productsCollection = collection(FIRESTORE_DB, "products");
-  //       const productsSnapshot = await getDocs(productsCollection);
-  //       const fetchedProducts: Product[] = productsSnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         name: doc.data().name,
-  //         description: doc.data().description,
-  //         price: doc.data().price,
-  //         image: doc.data().image,
-  //         discountPrice: doc.data().discountPrice,
-  //       }));
+  const FadeInView: React.FC<FadeInViewProps> = (props) => {
+    const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  //       setProducts(fetchedProducts);
-  //       setFilteredProducts(fetchedProducts);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
+    useEffect(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, [fadeAnim]);
 
-  //   fetchProducts();
-  // }, []);
-
-  const updateSearch = (text: string) => {
-    if (text.valueOf() === "") {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter((product) =>
-        product.name.toLowerCase().includes(search.toLowerCase())
-      );
-      setProducts(filtered);
-    }
-
-    setSearch(text);
-  };
-
-  return (
-    <View style={styles.background}>
-      <AppHeader title={"My Fridge"} />
-      <View style={{ paddingTop: 30 }}/>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
-        style={{ backgroundColor: theme.colors.background }}
+    return (
+      <Animated.View
+        style={{
+          ...props.style,
+          opacity: fadeAnim,
+        }}
       >
-        {/* TODO: CHANGE THIS TO PRODUCTS/FILTERED PRODUCTS */}
-        <ProductList items={listOfItems} />
-      </ScrollView>
+        {props.children}
+      </Animated.View>
+    );
+  };
+
+  const openPopup = (value: string, field: string) => {
+    setPopupVisible(true);
+    setTextInputValue(value);
+    setSelectedField(field);
+  };
+
+  // leafs
+
+  const handlePressIn = (option: number) => {
+    Animated.spring(animatedButtonScale, {
+      toValue: 1.5,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
+  const handlePressOut = (option: number) => {
+    Animated.spring(animatedButtonScale, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
+  const animatedScaleStyle = {
+    transform: [{ scale: animatedButtonScale }],
+  };
+
+  const navigation = useNavigation();
+
+  // Editing Changes
+  const saveChanges = (newValue: string) => {
+    const updatedData = { ...data };
+    switch (selectedField) {
+      case "name":
+        updatedData.name = newValue;
+        break;
+      case "quantity":
+        updatedData.quantity = parseInt(newValue);
+        break;
+      case "expiryDate":
+        updatedData.expiryDate = new Date(newValue);
+        break;
+      case "weight":
+        updatedData.weight = newValue;
+        break;
+      case "price":
+        updatedData.price = parseFloat(newValue);
+        break;
+      case "healthComment":
+        updatedData.healthComment = newValue;
+        break;
+      default:
+        break;
+    }
+    setData(updatedData);
+    setPopupVisible(false);
+  };
+  return (
+    <View style={styles.container}>
+      <AppHeader
+        title={"Items"}
+        // TODO
+        // TODO
+        onBackIcon={<Icon name="undo" size={20} color={theme.colors.accent} />}
+      />
+      <SafeAreaView style={commonStyles.safeAreaView}>
+        {/*Image*/}
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: "https://domf5oio6qrcr.cloudfront.net/medialibrary/11525/0a5ae820-7051-4495-bcca-61bf02897472.jpg",
+            }}
+            style={styles.image}
+          />
+        </View>
+        {/*Title*/}
+        <View style={styles.editContainer}>
+          <TextInput style={styles.h1} value={data.name} editable={false} />
+          <TouchableOpacity onPress={() => openPopup(data.name, "name")}>
+            <Icon name="edit" size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
+        </View>
+        {/*HealthRating*/}
+        <View style={styles.ratingContainer}>
+          <View style={styles.leafs}>
+            {leafRatingOptions.map((option) => (
+              <TouchableWithoutFeedback
+                onPressIn={() => handlePressIn(option)}
+                onPressOut={() => handlePressOut(option)}
+                key={option}
+              >
+                <Animated.View style={animatedScaleStyle}>
+                  <MaterialIcons
+                    name={leafRating >= option ? "eco" : "eco"}
+                    size={25}
+                    style={
+                      leafRating >= option
+                        ? styles.leafSelected
+                        : styles.leafUnselected
+                    }
+                  />
+                </Animated.View>
+              </TouchableWithoutFeedback>
+            ))}
+          </View>
+        </View>
+        {/*Quantity*/}
+        <View style={styles.editContainer}>
+          <Text style={styles.h2}>Quantity</Text>
+          <TextInput
+            style={styles.p}
+            value={data.quantity.toString()}
+            editable={false}
+          />
+          <TouchableOpacity
+            onPress={() => openPopup(data.quantity.toString(), "quantity")}
+          >
+            <Icon name="edit" size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
+        </View>
+        {/*ExpiryDate*/}
+        <View style={styles.editContainer}>
+          <Text style={styles.h2}>Expiry Date </Text>
+
+          {showPicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+              style={styles.DateTimePicker}
+            />
+          )}
+        </View>
+        {/*Weight*/}
+        <View style={styles.editContainer}>
+          <Text style={styles.h2}>Weight</Text>
+          <TextInput style={styles.p} value={data.weight} editable={false} />
+          <TouchableOpacity onPress={() => openPopup(data.weight, "weight")}>
+            <Icon name="edit" size={20} color={theme.colors.primary} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.healthComment}>{data.healthComment}</Text>
+        <View style={styles.buttonContainer}>
+          <Button
+            title={"Eat"}
+            titleStyle={{ fontWeight: "bold", fontSize: 27 }}
+            color="red"
+            buttonStyle={{
+              backgroundColor: theme.colors.primary,
+              height: 70,
+              width: 130,
+              borderRadius: 10,
+            }}
+            // TODO
+          />
+          <Button
+            title={"Trash"}
+            titleStyle={{ fontWeight: "bold", fontSize: 27 }}
+            buttonStyle={{
+              backgroundColor: theme.colors.accent,
+              height: 70,
+              width: 130,
+              borderRadius: 10,
+            }}
+            onPress={() => navigation.goBack()} // TODO
+          />
+        </View>
+
+        {popupVisible && (
+          <FadeInView style={styles.popupContainer}>
+            <View style={styles.popupContent}>
+              <Text style={styles.popupTitle}>Edit {selectedField}</Text>
+              <TextInput
+                style={styles.popupInput}
+                value={textInputValue}
+                onChangeText={setTextInputValue}
+              />
+              <TouchableOpacity
+                style={styles.popupButton}
+                onPress={() => saveChanges(textInputValue)}
+              >
+                <Text style={styles.popupButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </FadeInView>
+        )}
+      </SafeAreaView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: theme.colors.background,
-    height: "100%",
+  container: {
+    flex: 1,
+  },
+  header: {
+    fontWeight: "bold",
+    fontSize: 25,
+  },
+  imageContainer: {
     width: "100%",
+    height: "30%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  image: {
+    width: "80%",
+    height: "80%",
+  },
+  h1: {
+    flex: 1,
+    color: theme.colors.text,
+    fontSize: 50,
+    fontWeight: "600",
+    marginLeft: 20,
+  },
+  h2: {
+    flex: 1,
+    color: theme.colors.text,
+    padding: 5,
+    fontSize: 20,
+    marginLeft: 20,
+    fontWeight: "bold",
+  },
+  p: {
+    flex: 1,
+    color: theme.colors.text,
+    fontSize: 20,
+    marginRight: 35,
+  },
+  label: {
+    marginLeft: 10,
+  },
+  editContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    paddingRight: 20,
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  healthComment: {
+    color: theme.colors.text,
+    fontSize: 20,
+    fontStyle: "italic",
+    padding: 25,
+  },
+  popupContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  popupContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+  },
+  popupTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  popupInput: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  popupButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: "center",
+  },
+  popupButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  leafs: {
+    display: "flex",
+    flexDirection: "row",
+    marginVertical: 10,
+    marginLeft: 20,
+  },
+  leafUnselected: {
+    color: "#aaa",
+  },
+  leafSelected: {
+    color: "#008000",
+  },
+  DateTimePicker: {
+    marginRight: 120,
   },
 });
 
