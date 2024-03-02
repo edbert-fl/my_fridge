@@ -2,14 +2,21 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "package manager for backend",
-  "main": "database.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js;"
   },
-  "author": "leo",
+  "author": "",
   "license": "ISC",
   "dependencies": {
-    "pg": "^8.11.3"
+    "@azure-rest/ai-document-intelligence": "^1.0.0-beta.1",
+    "@azure-rest/ai-vision-image-analysis": "^1.0.0-beta.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "http": "^0.0.1-security",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.11.3",
+    "sharp": "^0.33.2"
   }
 }
