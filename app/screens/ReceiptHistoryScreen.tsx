@@ -55,7 +55,25 @@ export const ReceiptHistory = () => {
   };
 
   const [products, setProducts] = useState<Receipt[]>(sortReceipt(receipts));
-
+  React.useEffect(() => {
+    const fetchReceipts = async (userID: Number) => {
+      try {
+        const response = await axios.get(`http://${DATABASE_URL}/receipts/${userID}`);
+        const fetchedReceipts: Receipt[] = response.map((data: any) => ({
+          userID: data.userID,
+          receiptID: data.receiptID,
+          store: data.store,
+          dateOfPurchase: data.dateOfPurchase,
+          healthRating: data.healthRating,
+        }));
+        setProducts(fetchedReceipts);
+        console.log("Response: ", response);
+      } catch (error) {
+        console.log(`Error fetching receipts: ${error}`);
+      }
+    };
+    fetchReceipts(1); // TODO: Place generic args not just 1
+  }, []);
   return (
     <View style={styles.background}>
       <AppHeader title={"My Receipts"} />
