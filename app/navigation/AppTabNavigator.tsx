@@ -106,17 +106,16 @@ const AppTabNavigator = () => {
       >
         <View
           style={{
-            alignItems: "center",
-            width: route.name === "Scanner" ? "180%" : "100%",
+            marginTop: 20,
           }}
         >
           {/* <Icon name={iconMappings[route.name].name} size={iconMappings[route.name].size} color={iconMappings[route.name].color} /> */}
           <Text
             style={{
               color: textColor,
-              fontSize: 10, // Adjust font size as needed
+              fontSize: 10,
               fontWeight: "500",
-              marginTop: 60, // Adjust margin to create space between icon and text
+              marginTop: 60,
             }}
           >
             {route.name}
