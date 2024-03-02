@@ -27,4 +27,8 @@ const styles = StyleSheet.create({
   ProductContainer: {
     marginTop: 20,
   },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> a61bcad (Edited ItemsInReceipt and added ReceiptHistory)

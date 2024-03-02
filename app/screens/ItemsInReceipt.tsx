@@ -70,7 +70,7 @@ export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
         }
       }
     }
-    return items
+    return items;
   }
 
   const listOfItems: Item[] = [noodle, burger, chicken];
@@ -111,7 +111,8 @@ export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
       );
-      setProducts(filtered);
+      setProducts(sortItems(filtered));
+      
     }
 
     setSearch(text);
