@@ -1,0 +1,22 @@
+{
+    "store_name": "Coles",
+    "store_location": "CS WORLD SQUARE",
+    "date_of_purchase": "28/02/24",
+    "items": [
+        {
+            "item_name": "CAMPBELLS REAL STOCK 1 LITRE",
+            "food_category": "packaged food",
+            "quantity": "1",
+            "health_rating": "3",
+            "health_comment": "This product, Campbell's Real Stock, provides flavor to your dishes without adding extra calories, making it a convenient choice for enhancing homemade meals."
+        },
+        {
+            "item_name": "ROYAL GALA APPLES PER KG",
+            "food_category": "fresh produce",
+            "quantity": "0.436 kg",
+            "health_rating": "4",
+            "health_comment": "Royal Gala Apples are a good source of dietary fiber and vitamin C. Eating apples may help improve digestion and boost immunity."
+        }
+    ],
+    "recommendation": "Consider incorporating more fresh produce like apples into your diet for added nutritional benefits."
+}
