@@ -22,6 +22,7 @@ import NotificationScreen from "../screens/NotificationScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { TabParamList } from "../utils/Types";
 import ItemScreen from "../screens/ItemScreen";
+import ItemsInReceipt from "../screens/ItemsInReceipt";
 
 interface IconMap {
   [key: string]: IconInformation;
@@ -202,7 +203,7 @@ const AppTabNavigator = () => {
       />
       <Tab.Screen
         name="ItemScreen"
-        component={ItemScreen}
+        component={ItemsInReceipt}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (

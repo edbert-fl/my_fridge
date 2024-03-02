@@ -6,6 +6,7 @@ export interface User {
   username: string,
   email: string,              // email format
   salt: string,
+  password?: string,
   createdAt: Date
   healthConditions?: String[] | null,   // comma seperated values: diabetes, lactose intolerance
   healthGoals?: String[] | null,        // comma seperated values: lose weight, build muscle, eat healthier

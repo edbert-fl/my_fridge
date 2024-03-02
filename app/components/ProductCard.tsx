@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View, Image } from "react-native";
 import { Item } from "../utils/Types";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useState } from "react";
@@ -9,15 +9,17 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
-    const leafRatingOptions = [1, 2, 3, 4, 5];
-    const [leafRating, setleafRating] = useState(item.healthRating);
-
+  const leafRatingOptions = [1, 2, 3, 4, 5];
+  const [leafRating, setleafRating] = useState(item.healthRating);
 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <View style={styles.image}></View>
+          <Image
+            source={require("../../assets/burger_placeholder.png")}
+            style={styles.image}
+          />
         </View>
         <View style={styles.rightContainer}>
           <View>
@@ -32,15 +34,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
             <Text>Health Rating </Text>
             <View style={styles.leafs}>
               {leafRatingOptions.map((option) => (
-                    <MaterialIcons
-                      name={leafRating >= option ? "eco" : "eco"}
-                      size={25}
-                      style={
-                        leafRating >= option
-                          ? styles.leafSelected
-                          : styles.leafUnselected
-                      }
-                    />
+                <MaterialIcons
+                  name={leafRating >= option ? "eco" : "eco"}
+                  size={25}
+                  style={
+                    leafRating >= option
+                      ? styles.leafSelected
+                      : styles.leafUnselected
+                  }
+                />
               ))}
             </View>
           </View>
@@ -90,8 +92,6 @@ const styles = StyleSheet.create({
   image: {
     height: 60,
     width: 60,
-    backgroundColor: "red",
-    borderRadius: 3,
   },
 
   rightContainer: {
@@ -102,11 +102,9 @@ const styles = StyleSheet.create({
     paddingTop: 11,
     paddingBottom: 11,
   },
-
   itemName: {
     marginBottom: 10,
     fontWeight: "bold",
-    // textDecorationLine: "underline",
     fontSize: 17,
   },
 

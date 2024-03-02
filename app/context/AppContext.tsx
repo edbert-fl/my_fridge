@@ -4,11 +4,15 @@ import { User } from "../utils/Types";
 interface AppContextProps {
   currUser: User | null;
   setCurrUser: Dispatch<SetStateAction<User | null>>;
+  tempCurrUser: User | null;
+  setTempCurrUser: Dispatch<SetStateAction<User | null>>;
 }
 
 export const AppContext = createContext<AppContextProps | undefined>({
   currUser: null,
   setCurrUser: () => {},
+  tempCurrUser: null,
+  setTempCurrUser: () => {},
 });
 
 export const useAppContext = () => {

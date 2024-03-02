@@ -35,8 +35,8 @@ const ProductList: React.FC<ProductListProps> = ({ items }) => {
   return (
     <View>
       {items.map((item, index) => (
-        <View>
-          <ProductCard key={index} item={item} />
+        <View key={index}>
+          <ProductCard item={item} />
         </View>
       ))}
     </View>

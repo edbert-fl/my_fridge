@@ -11,9 +11,9 @@ const HistoryList: React.FC<HistoryListProps> = ({ Receipts }) => {
   return (
     <View style={styles.ProductContainer}>
       {Receipts.map((receipt, index) => (
-        <TouchableOpacity>
+        <TouchableOpacity key={index}>
           <View>
-            <HistoryCard key={index} receipt={receipt} />
+            <HistoryCard receipt={receipt} />
           </View>
         </TouchableOpacity>
       ))}

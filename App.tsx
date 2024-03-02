@@ -12,7 +12,7 @@ import ProfileScreen from "./app/screens/ProfileScreen";
 export default function App() {
 
   const [currUser, setCurrUser] = useState<User | null>(null);
-  const [currOrganization, setCurrOrganization] = useState(null);
+  const [tempCurrUser, setTempCurrUser] = useState<User | null>(null);
 
   // Everytime app is loaded attempt to retrieve the userSession.
   useEffect(() => {
@@ -62,6 +62,8 @@ export default function App() {
         value={{
           currUser: currUser,
           setCurrUser: setCurrUser,
+          tempCurrUser: tempCurrUser,
+          setTempCurrUser: setTempCurrUser
         }}
       >
         <AuthStackNavigator />
