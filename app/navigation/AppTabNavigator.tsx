@@ -94,7 +94,7 @@ const AppTabNavigator = () => {
             color: textColor,
             fontSize: 10, // Adjust font size as needed
             fontWeight: "500",
-            marginTop: 60, // Adjust margin to create space between icon and text
+            marginTop: 20, // Adjust margin to create space between icon and text
           }}
         >
           {route.name}
@@ -137,7 +137,7 @@ const AppTabNavigator = () => {
       <Tab.Screen
         name={"Home"}
         component={HomeScreen}
-        options={{ headerShown: true,
+        options={{ headerShown: false,
             tabBarIcon: ({focused}) => <AntDesign name="home" size={24} color={focused ? "lightgreen" : "black"} />
         }}
       />
