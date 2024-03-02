@@ -6,6 +6,7 @@ export interface User {
   username: string,
   email: string,              // email format
   salt: string,
+  password?: string,
   createdAt: Date
   healthConditions?: String[] | null,   // comma seperated values: diabetes, lactose intolerance
   healthGoals?: String[] | null,        // comma seperated values: lose weight, build muscle, eat healthier
@@ -51,15 +52,15 @@ export interface BoundingBox {
 export type TabParamList = {
   Home: undefined;
   ReceiptHistory: undefined;
-  Scanner: undefined;
+  ScannerStackNavigator: undefined;
   Notification: undefined;
   Profile: undefined;
 };
 
 export type ScannerParamList = {
   Scanner: undefined,
-  ItemsInReceipt: { receiptID: number },
-  ItemScreen: { itemID: number }
+  ItemsInReceipt: { receiptID?: number | undefined },
+  ItemScreen: { itemID: number, justAdded: boolean }
 };
 
 export type RootStackParamList = {

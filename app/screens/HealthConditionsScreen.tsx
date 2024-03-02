@@ -11,6 +11,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList, User } from "../utils/Types";
 import { commonStyles, theme } from "../utils/Styles";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useAppContext } from "../context/AppContext";
 
 const HealthConditionsScreen = () => {
   const [conditions, setConditions] = useState<String[]>([
@@ -19,21 +20,17 @@ const HealthConditionsScreen = () => {
     "Obesity",
   ]);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const [tempCurrUser, setTempCurrUser] = useState<User>({
-    userID: 69,
-    username: "Mary Jane",
-    email: "mary.jane@gmail.com", // email format
-    salt: "some_salt",
-    createdAt: new Date(),
-    healthConditions: null,
-    healthGoals: null,
-  });
+  const {tempCurrUser, setTempCurrUser} = useAppContext();
 
   const navigateToHealthGoals = () => {
     navigation.navigate("HealthGoals");
   };
 
   const toggleCondition = (condition: String) => {
+    if (tempCurrUser === null) {
+      throw new Error("No user found");
+    }
+
     if (tempCurrUser.healthConditions == null) {
       setTempCurrUser({ ...tempCurrUser, healthConditions: [condition] });
       return;
@@ -51,6 +48,10 @@ const HealthConditionsScreen = () => {
   };
 
   const doesUserHaveCondition = (condition: String) => {
+    if (tempCurrUser === null) {
+      throw new Error("No user found");
+    }
+
     if (tempCurrUser.healthConditions == null) {
       return false;
     }
@@ -86,8 +87,8 @@ const HealthConditionsScreen = () => {
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={styles.button} onPress={navigateToHealthGoals}>
-          {tempCurrUser.healthConditions === null ||
-          tempCurrUser.healthConditions?.length === 0 ? (
+          {(tempCurrUser as User).healthConditions === null ||
+          (tempCurrUser as User).healthConditions?.length === 0 ? (
             <Text style={styles.buttonText}>None of these apply</Text>
           ) : (
             <Text style={styles.buttonText}>Next</Text>

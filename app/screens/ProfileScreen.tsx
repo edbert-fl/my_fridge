@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { theme } from '../utils/Styles';
 import { AntDesign } from '@expo/vector-icons';
+import { useAppContext } from '../context/AppContext';
 const ProfileScreen = () => {
+  const { setCurrUser } = useAppContext();
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
@@ -40,7 +42,7 @@ const ProfileScreen = () => {
       <TouchableOpacity style={styles.editButton}>
         <Text style={styles.editButtonText}>Edit Profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.editButton, {marginTop: 20, backgroundColor:theme.colors.warning, flexDirection:"row", gap:10, justifyContent:"center"}]}>
+      <TouchableOpacity onPress={() => setCurrUser(null)} style={[styles.editButton, {marginTop: 20, backgroundColor:theme.colors.warning, flexDirection:"row", gap:10, justifyContent:"center"}]}>
       <AntDesign name="logout" size={24} color="white"  />  
         <Text style={styles.editButtonText}>
           Log Out

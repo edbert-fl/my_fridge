@@ -10,14 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-type ItemsInReceiptRouteProp = RouteProp<ScannerParamList, "ItemsInReceipt">;
-
-interface ItemsInReceiptProps {
-  route: ItemsInReceiptRouteProp;
-}
-
-export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
-  const { receiptID } = route.params;
+export const FridgeScreen = () => {
   const scannerNavigation =
     useNavigation<StackNavigationProp<ScannerParamList>>();
 
@@ -131,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemsInReceipt;
+export default FridgeScreen;
