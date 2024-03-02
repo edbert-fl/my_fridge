@@ -20,18 +20,18 @@ module.exports.initializeRoutes = (app) => {
 
     try {
       client = await pool.connect();
-      const result = await client.query(
+      const userResult = await client.query(
         "SELECT * FROM USERS WHERE email = $1",
         [email]
       );
+
       const userResultData = userResult.rows[0];
+      
       if (userResult.rows.length === 1) {
-        const storedHashedPassword = userResultData.hashedPassword;
+        const storedHashedPassword = userResultData.hashedpassword;
         const salt = userResultData.salt;
 
         const hashedInputPassword = await bcrypt.hash(password, salt);
-
-        console.log(userResultData);
 
         if (hashedInputPassword === storedHashedPassword) {
           res.json({
@@ -57,7 +57,7 @@ module.exports.initializeRoutes = (app) => {
   });
 
   app.post("/user/register", async function (req, res) {
-    const { displayName, email, password } = req.body;
+    const { username, email, password, healthGoals, healthConditions } = req.body;
     let client;
 
     try {
@@ -65,8 +65,8 @@ module.exports.initializeRoutes = (app) => {
       const generatedSalt = await bcrypt.genSalt(16);
       const hashedPassword = await bcrypt.hash(password, generatedSalt);
       const result = await client.query(
-        "INSERT INTO USERS (username, email, hashed_password, salt) VALUES ($1, $2, $3, $4) RETURNING *",
-        [displayName, email, hashedPassword, generatedSalt]
+        "INSERT INTO USERS (username, email, hashedPassword, salt, healthGoals, healthConditions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        [username, email, hashedPassword, generatedSalt, healthGoals, healthConditions]
       );
       console.log("Resulting Data:", result.rows[0]);
       res.json({
