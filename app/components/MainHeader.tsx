@@ -14,7 +14,6 @@ interface MainHeaderProps {
 }
 
 export const MainHeader: React.FC<MainHeaderProps> = ({title}) => {
-    const {menuVisible, setMenuVisible} = useAppContext()
     return (
         <SafeAreaView>
             
@@ -25,7 +24,6 @@ export const MainHeader: React.FC<MainHeaderProps> = ({title}) => {
         //   onRightPress={() => handleOpenCart()}
                 onRightIcon={<Icon name="shopping-cart" size={25} color="#FFFFFF" />}
             />
-            <NavigationScreen menuVisible={menuVisible} setMenuVisible={(menuVisible)=> setMenuVisible(menuVisible)} />
         </SafeAreaView>
     )
 }

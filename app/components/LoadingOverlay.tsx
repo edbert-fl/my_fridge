@@ -71,6 +71,7 @@ import {
       position: "absolute",
       height: "100%",
       width: WINDOW_INNER_WIDTH,
+      zIndex: 99
     },
     overlay: {
       backgroundColor: "black",
