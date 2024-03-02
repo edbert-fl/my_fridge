@@ -7,7 +7,7 @@ module.exports.initializeRoutes = (app) => {
     })
 
     app.post("/user/register", async function(req, res) {
-        const { displayName, email, password, healthConditions, healthGoals } = req.body;
+        const { displayName, email, password } = req.body;
         let client;
 
         try {
@@ -15,14 +15,12 @@ module.exports.initializeRoutes = (app) => {
             const generatedSalt = await bcrypt.genSalt(16);
             const hashedPassword = await bcrypt.hash(password, generatedSalt);
             const result = await client.query(
-                "INSERT INTO USERS (username, email, hashed_password, salt, health_conditions, health_goals ) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+                "INSERT INTO USERS (username, email, hashed_password, salt) VALUES ($1, $2, $3, $4) RETURNING *",
                 [
                     displayName,
                     email,
                     hashedPassword,
                     generatedSalt,
-                    healthConditionString,  // Converted to string if array
-                    healthGoalsString // Converted to string if array
                 ]
             );
             console.log("Resulting Data:", result.rows[0]);
