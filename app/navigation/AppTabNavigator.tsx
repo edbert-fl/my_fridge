@@ -21,6 +21,7 @@ import ScannerScreen from "../screens/ScannerScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { TabParamList } from "../utils/Types";
+import ItemScreen from "../screens/ItemScreen";
 
 interface IconMap {
   [key: string]: IconInformation;
@@ -74,8 +75,8 @@ const AppTabNavigator = () => {
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 60,
       },
-      Notification: {
-        name: "bell",
+      ItemScreen: {
+        name: "fastfood",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
@@ -201,16 +202,16 @@ const AppTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Notification"
-        component={NotificationScreen}
+        name="ItemScreen"
+        component={ItemScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <Feather
-              name="bell"
-              size={24}
-              color={focused ? theme.colors.primary : theme.colors.accent}
-            />
+            <MaterialIcons
+                name="fastfood"
+                size={24}
+                color={focused ? theme.colors.primary : theme.colors.accent}
+              />
           ),
         }}
       />

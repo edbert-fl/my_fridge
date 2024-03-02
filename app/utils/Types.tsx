@@ -28,7 +28,6 @@ export interface Receipt {
   receiptID: number,
   store: string,
   dateOfPurchase: Date,
-  totalSpent: number,
   healthRating: number
 }
 

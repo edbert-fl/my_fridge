@@ -4,8 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../utils/Types";
 import { commonStyles, theme } from "../utils/Styles";
+import axios from "axios";
+import { SERVER_URL } from "../utils/Helpers";
+import { useAppContext } from "../context/AppContext";
 
 const Login = () => {
+  const {setCurrUser} = useAppContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,8 +24,26 @@ const Login = () => {
     navigation.navigate("HealthConditions");
   };
 
-  const signIn = ()  => {
-    navigateToHealthConditions();
+  const signIn = async ()  => {
+    setLoading(true);
+    try {
+      const response = await axios.post(`${SERVER_URL}/user/login`, {
+        email: password, 
+        password: password,
+      });
+      const userData = response.data.user;
+      setCurrUser({
+        userID: userData.userID,
+        username: userData.username,
+        email: userData.email,
+        salt: userData.salt,
+        createdAt: new Date(userData.createdAt),
+      })
+    } catch (error) {
+        alert(`Error signing in ${error}`);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleSignUp = () => {

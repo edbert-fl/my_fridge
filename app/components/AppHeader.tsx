@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       width: '100%',
-      flex: 3
+      flex: 3,
     },
     backButton: {
       paddingLeft: 10,
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-    //   backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary,
       paddingTop: 50,
       padding: 15,
     },

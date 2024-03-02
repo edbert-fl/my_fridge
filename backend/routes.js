@@ -14,6 +14,77 @@ module.exports.initializeRoutes = (app) => {
     res.json({ msg: "This is CORS-enabled for all origins!" });
   });
 
+  app.post("/user/login", async function (req, res) {
+    const { email, password } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+      const result = await client.query(
+        "SELECT * FROM USERS WHERE email = $1",
+        [email]
+      );
+      const userResultData = userResult.rows[0];
+      if (userResult.rows.length === 1) {
+        const storedHashedPassword = userResultData.hashedPassword;
+        const salt = userResultData.salt;
+
+        const hashedInputPassword = await bcrypt.hash(password, salt);
+
+        console.log(userResultData);
+
+        if (hashedInputPassword === storedHashedPassword) {
+          res.json({
+            user: userResultData,
+            message: "Authentication successful!",
+          });
+        } else {
+          res.status(401).json({ error: "Authentication failed" });
+        }
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    } catch (error) {
+      console.log("Error logging in user", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
+  app.post("/user/register", async function (req, res) {
+    const { displayName, email, password } = req.body;
+    let client;
+
+    try {
+      client = await pool.connect();
+      const generatedSalt = await bcrypt.genSalt(16);
+      const hashedPassword = await bcrypt.hash(password, generatedSalt);
+      const result = await client.query(
+        "INSERT INTO USERS (username, email, hashed_password, salt) VALUES ($1, $2, $3, $4) RETURNING *",
+        [displayName, email, hashedPassword, generatedSalt]
+      );
+      console.log("Resulting Data:", result.rows[0]);
+      res.json({
+        user: result.rows[0],
+        message: "User added successfully!",
+      });
+    } catch (error) {
+      console.log("Error adding user", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    } finally {
+      if (client) {
+        client.release();
+      }
+    }
+  });
+
   app.post("/user/register", async function (req, res) {
     const { displayName, email, password } = req.body;
     let client;
@@ -48,7 +119,7 @@ module.exports.initializeRoutes = (app) => {
 
     // Some magic...
     const openai = new OpenAI({
-      apiKey: "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",
+      apiKey: "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",
     });
     const userPrompt = `${receiptData} \n this person has ${healthConditions} and is aiming for ${healthGoals} provide recommendation`;
     const systemPrompt = `Use the following step-by-step instructions to respond to user inputs that come from scanning a receipt and transform it into a JSON data. Never assume the store. If there is no data in any field then return null.
@@ -100,7 +171,10 @@ module.exports.initializeRoutes = (app) => {
           max_tokens: 2000,
         });
 
-        console.log("RESPONSE FROM OPEN AI: ", completion.choices[0].message.content);
+        console.log(
+          "RESPONSE FROM OPEN AI: ",
+          completion.choices[0].message.content
+        );
         result = JSON.parse(completion.choices[0].message.content);
         success = true;
       } catch (error) {
@@ -220,6 +294,117 @@ module.exports.initializeRoutes = (app) => {
     } catch (error) {
       // Handle errors during image verification
       console.error("Error reading receipt", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
+  app.get("/receipts/:userID", async function (req, res) {
+    const { userID } = req.params;
+
+    try {
+      const query = `SELECT * FROM Receipt WHERE userID = $1`;
+      const { rows } = await pool.query(query, [userID]);
+      res.json({ receipts: rows });
+    } catch (error) {
+      console.error("Error fetching receipts:", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
+  // Route to get all items in a particular receipt based on receiptID
+  app.get("/items/:receiptID", async function (req, res) {
+    const { receiptID } = req.params;
+
+    try {
+      const query = `SELECT * FROM Item WHERE receiptID = $1`;
+      const { rows } = await pool.query(query, [receiptID]);
+      res.json({ items: rows });
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
+  // Route to get all items for a particular user that have not yet expired
+  app.get("/user/:userID/items/notexpired", async function (req, res) {
+    const { userID } = req.params;
+
+    try {
+      const query = `SELECT i.* 
+                       FROM Item i
+                       JOIN Receipt r ON i.receiptID = r.receiptID
+                       WHERE r.userID = $1 AND i.expiryDate > CURRENT_DATE`;
+      const { rows } = await pool.query(query, [userID]);
+      res.json({ items: rows });
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
+  // Route to insert a new receipt
+  app.post("/receipts", async function (req, res) {
+    const { userID, store, dateOfPurchase, healthRating } = req.body;
+
+    try {
+      const query = `INSERT INTO Receipt (userID, store, dateOfPurchase, healthRating)
+                       VALUES ($1, $2, $3, $4) RETURNING *`;
+      const { rows } = await pool.query(query, [
+        userID,
+        store,
+        dateOfPurchase,
+        healthRating,
+      ]);
+      res.json({ receipt: rows[0] });
+    } catch (error) {
+      console.error("Error inserting receipt:", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
+  app.post("/items", async function (req, res) {
+    const items = req.body.items;
+
+    try {
+      // Prepare the query string
+      const query = `INSERT INTO Item (receiptID, name, quantity, expiryDate, weight, price, healthRating, healthComment)
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`;
+
+      // Prepare an array to hold all inserted items
+      const insertedItems = [];
+
+      // Iterate over each item in the request body
+      for (const item of items) {
+        // Execute the query for each item
+        const { rows } = await pool.query(query, [
+          item.receiptID,
+          item.name,
+          item.quantity,
+          item.expiryDate,
+          item.weight,
+          item.price,
+          item.healthRating,
+          item.healthComment,
+        ]);
+
+        // Push the inserted item to the array
+        insertedItems.push(rows[0]);
+      }
+
+      // Respond with the array of inserted items
+      res.json({ items: insertedItems });
+    } catch (error) {
+      console.error("Error inserting items:", error);
       res
         .status(500)
         .json({ error: "Internal Server Error", details: error.message });
