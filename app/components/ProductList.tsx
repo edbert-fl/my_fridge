@@ -34,10 +34,3 @@ const ProductList: React.FC<ProductListProps> = ({ items }) => {
 };
 
 export default ProductList;
-<<<<<<< HEAD
-=======
-
-const styles = StyleSheet.create({
-  ProductContainer: {},
-});
->>>>>>> a61bcad (Edited ItemsInReceipt and added ReceiptHistory)
