@@ -15,36 +15,31 @@ const AuthStackNavigator = () => {
 
   return (
     <Stack.Navigator initialRouteName="AuthApp">
-      {currUser ? (
-        <Stack.Screen
-          name="AppTabNavigator"
-          component={AppTabNavigator}
-          options={{ headerShown: false }}
-        />
-      ) : (
-        <>
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Register"
-            component={RegisterScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="HealthConditions"
-            component={HealthConditionsScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="HealthGoals"
-            component={HealthGoalsScreen}
-            options={{ headerShown: false }}
-          />
-        </>
-      )}
+      <Stack.Screen
+        name="AppTabNavigator"
+        component={AppTabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="HealthConditions"
+        component={HealthConditionsScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="HealthGoals"
+        component={HealthGoalsScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

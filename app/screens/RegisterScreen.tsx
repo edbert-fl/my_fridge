@@ -6,16 +6,19 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../utils/Types";
+import { RootStackParamList, User } from "../utils/Types";
 import { theme } from "../utils/Styles";
 import LoadingOverlay from "../components/LoadingOverlay";
+import { SERVER_URL } from "../utils/Helpers";
+import axios from "axios";
+import { useAppContext } from "../context/AppContext";
 
 const RegisterScreen = () => {
+  const {currUser, setCurrUser} = useAppContext();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +34,34 @@ const RegisterScreen = () => {
     navigation.navigate("HealthConditions");
   };
 
-  const signUp = () => {
+  const signUp = async () => {
     navigateToHealthConditions();
-    Alert.alert("Dev Error!", "Register not implemented.");
+    setLoading(true);
+    try {
+      let response = null;
+      response = await axios.post(`${SERVER_URL}/user/register`, {
+        displayName: displayName,
+        email: email,
+        password: password,
+        currUser: currUser,
+      });
+      if (response.data.user) {
+        const userData = response.data.user;
+        setCurrUser({
+          userID: userData.id,
+          username: userData.username,
+          email: userData.email,
+          salt: userData.salt,
+          createdAt: new Date(userData.created_at),
+        })
+      }
+
+    } catch (error: any) {
+      console.log(error);
+      alert("Registration failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogin = () => {

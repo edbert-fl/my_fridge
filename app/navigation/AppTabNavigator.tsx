@@ -1,15 +1,26 @@
-import { Text } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { theme } from "../utils/Styles";
 import { useAppContext } from "../context/AppContext";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { RouteProp, ParamListBase } from "@react-navigation/native";
+import {
+  BottomTabNavigationProp,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
+import {
+  RouteProp,
+  ParamListBase,
+  useNavigation,
+} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { AntDesign } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
+import { Ionicons, Feather, Octicons, MaterialIcons } from "@expo/vector-icons";
+
 import ReceiptHistoryScreen from "../screens/ReceiptHistoryScreen";
 import ScannerScreen from "../screens/ScannerScreen";
 import NotificationScreen from "../screens/NotificationScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import { TabParamList } from "../utils/Types";
 
 interface IconMap {
   [key: string]: IconInformation;
@@ -25,6 +36,24 @@ const AppTabNavigator = () => {
   const Tab = createBottomTabNavigator();
   const { currUser } = useAppContext();
 
+  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+
+  const navigateToScanner = () => {
+    navigation.navigate("Scanner");
+  };
+
+  const getTabBarVisibility = (route: any) => {
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : route.name;
+
+    if (routeName === "Scanner") {
+      return false;
+    }
+
+    return true;
+  };
+
   const tabBarIcon = (
     focused: boolean,
     route: RouteProp<ParamListBase, string>
@@ -36,22 +65,22 @@ const AppTabNavigator = () => {
         size: 32,
       },
       ReceiptHistory: {
-        name: "TODO",
+        name: "receipt-outline",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Scanner: {
-        name: "TODO",
+        name: "camera",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
-        size: 32,
+        size: 60,
       },
       Notification: {
-        name: "TODO",
+        name: "bell",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
       Profile: {
-        name: "TODO",
+        name: "profile",
         color: focused ? theme.colors.primary : theme.colors.placeholderText,
         size: 32,
       },
@@ -71,15 +100,28 @@ const AppTabNavigator = () => {
       : theme.colors.placeholderText;
 
     return (
-      <Text
-        style={{
-          color: textColor,
-          fontSize: 12,
-          fontWeight: "500",
-        }}
+      <View
+        style={{ alignItems: "center", display: "flex", position: "absolute" }}
       >
-        {route.name}
-      </Text>
+        <View
+          style={{
+            alignItems: "center",
+            width: route.name === "Scanner" ? "180%" : "100%",
+          }}
+        >
+          {/* <Icon name={iconMappings[route.name].name} size={iconMappings[route.name].size} color={iconMappings[route.name].color} /> */}
+          <Text
+            style={{
+              color: textColor,
+              fontSize: 10, // Adjust font size as needed
+              fontWeight: "500",
+              marginTop: 60, // Adjust margin to create space between icon and text
+            }}
+          >
+            {route.name}
+          </Text>
+        </View>
+      </View>
     );
   };
 
@@ -87,8 +129,10 @@ const AppTabNavigator = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => tabBarIcon(focused, route),
+        tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: theme.colors.tabBackground,
+          backgroundColor: "white",
+          opacity: getTabBarVisibility(route) ? 1 : 0,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           position: "absolute",
@@ -100,35 +144,89 @@ const AppTabNavigator = () => {
           height: 100,
           paddingTop: 5,
           borderTopWidth: 0,
+          zIndex: 10,
+          activeTintColor: "white",
+          inactiveTintColor: "#d9d9d9",
         },
         tabBarLabel: ({ focused }) => tabBarLabel(focused, route),
+        //   headerStyle:{
+        //     backgroundColor:"white",
+
+        // },
       })}
       initialRouteName="Home"
     >
       <Tab.Screen
-        name="Home"
+        name={"Home"}
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <AntDesign
+              name="home"
+              size={24}
+              color={focused ? theme.colors.primary : theme.colors.accent}
+            />
+          ),
+        }}
       />
       <Tab.Screen
         name="ReceiptHistory"
         component={ReceiptHistoryScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="receipt-outline"
+              size={24}
+              color={focused ? theme.colors.primary : theme.colors.accent}
+            />
+          ),
+        }}
       />
-       <Tab.Screen
+      <Tab.Screen
         name="Scanner"
         component={ScannerScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarButton: (focused) => (
+            <TouchableOpacity onPress={navigateToScanner}>
+              <MaterialIcons
+                name="camera"
+                size={70}
+                color={focused ? theme.colors.primary : theme.colors.accent}
+              />
+            </TouchableOpacity>
+          ),
+        }}
       />
       <Tab.Screen
         name="Notification"
         component={NotificationScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <Feather
+              name="bell"
+              size={24}
+              color={focused ? theme.colors.primary : theme.colors.accent}
+            />
+          ),
+        }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <Octicons
+              name="person"
+              size={24}
+              color={focused ? theme.colors.primary : theme.colors.accent}
+            />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
