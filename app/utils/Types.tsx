@@ -32,6 +32,14 @@ export interface Receipt {
   healthRating: number
 }
 
+export interface Promo {
+  promoId: number,
+  store:string,
+  promotion: string,
+  duration: string,
+  dateOfEnding: Date
+}
+
 // Navigation Props
 
 export type RootBottomTabParamList = {

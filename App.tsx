@@ -5,8 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AuthStackNavigator from "./app/navigation/AuthStackNavigator";
 import { AppContext } from "./app/context/AppContext";
 import { User } from "./app/utils/Types";
-
+import HomeScreen from "./app/screens/HomeScreen";
+import { MainHeader } from "./app/components/MainHeader";
+import AppTabNavigator from "./app/navigation/AppTabNavigator";
 export default function App() {
+
   const [currUser, setCurrUser] = useState<User | null>(null);
   const [currOrganization, setCurrOrganization] = useState(null);
 
@@ -20,7 +23,7 @@ export default function App() {
   useEffect(() => {
     storeUserSession();
   }, [currUser]);
-
+  
   async function storeUserSession() {
     try {
       await AsyncStorage.setItem(
@@ -60,7 +63,10 @@ export default function App() {
           setCurrUser: setCurrUser,
         }}
       >
-        <AuthStackNavigator />
+        {/* <AuthStackNavigator /> */}
+        <HomeScreen/>
+        <AppTabNavigator />
+        {/* <MainHeader title="My FRIDGE" /> */}
       </AppContext.Provider>
     </NavigationContainer>
   );
