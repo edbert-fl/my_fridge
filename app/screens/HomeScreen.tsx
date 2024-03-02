@@ -1,86 +1,64 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
-import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native'
+import React,{useState, useEffect} from 'react'
+import { rotdList } from '../utils/defaultGoals';
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { data } from "../utils/defaultGoals";
-
-import { theme } from "../utils/Styles";
-import { Item, Promo } from "../utils/Types";
-
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { data } from '../utils/defaultGoals';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import { theme } from '../utils/Styles';
+import { Item, Promo } from '../utils/Types';
+import { BackgroundImage } from 'react-native-elements/dist/config';
+import FamousRecipeModal from '../components/famousRecipeModal';
+import DefaultRecipes from './DefaultRecipes';
+import SpecificRecipe from './SpecificRecipe';
+const Stack = createNativeStackNavigator();
 const HomeScreen = () => {
   const [fridgeItems, setFridgeItems] = useState<Item[]>([]);
-  const [currentPromos, setCurrentPromos] = useState<Promo[]>([]);
+  const [popularRecipesPressed, setPopularsPressed] = useState<boolean>(false);
+  const [currentPopularRecipe, setCurrentPopularRecipe] = useState([]);
+  const [recipeGoal, setRecipeGoal] = useState<string>("");
+  const [rotd, setRotd] = useState([])
+  const [viewRotd, setViewRotd] = useState(false)
   // make new feature to scan nutrition value as well.
-
-  const currImg = (goal: string) =>
-    goal === "Lose Weight" ? (
-      <Image
-        source={require("../../assets/loseweight_bg.jpg")}
-        style={styles.categoryImage}
-      />
-    ) : goal === "Gain Muscle/Bulking" ? (
-      <Image
-        source={require("../../assets/bulking_bg.jpg")}
-        style={styles.categoryImage}
-      />
-    ) : (
-      <Image
-        source={require("../../assets/diseaseprevention_bg.jpg")}
-        style={styles.categoryImage}
-      />
-    );
-
+  useEffect(()=>{
+    const index = Math.floor(Math.random()* rotdList.length);
+    setRotd(rotdList[index])
+    console.log(rotdList[index]);
+    
+  },[])
+  const currImg = (goal:string) => (
+    goal === "Lose Weight" ?
+     <Image source={require("../../assets/loseweight_bg.jpg")} style={styles.categoryImage} /> 
+     : goal === "Gain Muscle/Bulking" 
+     ? <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} /> 
+     : <Image source={require("../../assets/diseaseprevention_bg.jpg")} style={styles.categoryImage} />
+  )
+    if (popularRecipesPressed) {
+        return (
+        <DefaultRecipes currentPopularRecipe={currentPopularRecipe} setPopularsPressed={setPopularsPressed} recipeGoal={recipeGoal} />
+       )
+    }
+    if (viewRotd) {
+      return (
+        <SpecificRecipe mealDetail={rotd} setSpecifyRecipe={setViewRotd} />
+      )
+    }
   return (
-      <ScrollView>
-        <View
-          style={[
-            styles.promotionalArtContainer,
-            { width: 330, marginRight: 5, marginTop: 40 },
-          ]}
-        >
+    <ScrollView style={{marginTop:40}}>
+    <SafeAreaView style={styles.background}>
+        
+          <TouchableOpacity style={[styles.promotionalArtContainer, {width:330, marginRight:5}]} onPress={()=>setViewRotd(true)} >
           <View style={styles.blackBg} />
-          <Image
-            source={require("../../assets/rotd_placeholder.jpg")}
-            style={[styles.categoryImage, { opacity: 0.9 }]}
-          />
-          <Text
-            style={[
-              styles.goalHeading,
-              {
-                color: "beige",
-                fontSize: 40,
-                padding: 3,
-                alignSelf: "center",
-                justifyContent: "center",
-                zIndex: 3,
-              },
-            ]}
-          >
-            RECIPE OF
-          </Text>
-          <Text
-            style={[
-              styles.goalHeading,
-              {
-                color: "white",
-                fontSize: 40,
-                padding: 3,
-                alignSelf: "center",
-                justifyContent: "center",
-                zIndex: 3,
-              },
-            ]}
-          >
-            THE DAY
-          </Text>
-        </View>
+          <Image source={require("../../assets/rotd_placeholder.jpg")} style={[styles.categoryImage, {opacity:0.9}]} />
+            <Text style={[styles.goalHeading,{color:"beige", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
+              RECIPE OF
+            </Text>
+            <Text style={[styles.goalHeading,{color:"white", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
+              THE DAY
+            </Text>
+          </TouchableOpacity>
         <Text style={styles.heading}>Your Fridge</Text>
         <View style={styles.categories}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
@@ -138,35 +116,39 @@ const HomeScreen = () => {
             </View>
           </ScrollView>
         </View>
-        <Text style={[styles.heading, { bottom: 40 }]}>
-          Popular recipes right now
-        </Text>
-        <View style={{ display: "flex", bottom: 100, height: 300 }}>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {data.length === 0 ? (
-              <View style={styles.promosContainer}>
-                <View style={styles.promotionalArtContainer}>
-                  <Image
-                    source={require("../../assets/bulking_bg.jpg")}
-                    style={styles.categoryImage}
-                  />
-                  <Text style={styles.heading}>Promotion now</Text>
-                </View>
-                <View style={styles.promotionalArtContainer}>
-                  <Text style={styles.heading}>Promotion now</Text>
-                </View>
-                <View style={styles.promotionalArtContainer}>
-                  <Text style={styles.heading}>Promotion now</Text>
-                </View>
-              </View>
-            ) : (
-              <View style={styles.promosContainer}>
-                {data.map((curr_data, i) => (
-                  <View style={styles.promotionalArtContainer} key={i}>
-                    <View style={styles.blackBg} />
-                    {currImg(curr_data.goal)}
-                    <Text style={styles.goalHeading}>{curr_data.goal}</Text>
-                    <Text style={styles.goalDescription}>{curr_data.desc}</Text>
+        <Text style={[styles.heading,{bottom:40}]}>Popular recipes right now</Text>
+        <View style={{display:"flex", bottom:100,height:300}} >
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
+                {data.length === 0 ? (
+                  <View style={styles.promosContainer} >
+                    <View style={styles.promotionalArtContainer} >
+                      <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} />
+                      <Text style={styles.heading} >Promotion now</Text>
+                    </View>
+                    <View style={styles.promotionalArtContainer} >
+                      <Text style={styles.heading} >Promotion now</Text>
+                    </View>
+                    <View style={styles.promotionalArtContainer} >
+                      <Text style={styles.heading} >Promotion now</Text>
+                    </View>
+                  </View>
+                ):(
+                  <View style={styles.promosContainer}>
+                  {data.map((curr_data, i)=> (
+                    <TouchableOpacity style={styles.promotionalArtContainer} key={i} 
+                      onPress={()=> {
+                          setPopularsPressed(true);
+                          setCurrentPopularRecipe(curr_data.recipes)
+                          setRecipeGoal(curr_data.goal)
+                          console.log(popularRecipesPressed)
+                      }}
+                    >
+                        <View style={styles.blackBg} />
+                        {currImg(curr_data.goal)}
+                        <Text style={styles.goalHeading} >{curr_data.goal}</Text>
+                        <Text style={styles.goalDescription} >{curr_data.desc}</Text>
+                    </TouchableOpacity>
+                  ) )}
                   </View>
                 ))}
               </View>

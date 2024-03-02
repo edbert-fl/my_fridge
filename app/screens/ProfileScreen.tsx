@@ -47,7 +47,6 @@ const ProfileScreen = () => {
         <Text style={styles.editButtonText}>
           Log Out
         </Text>
-        
       </TouchableOpacity>
     </View>
   );
