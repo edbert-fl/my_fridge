@@ -1,19 +1,13 @@
 import * as React from "react";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { SearchBar } from "react-native-elements";
+import { Icon, SearchBar } from "react-native-elements";
 import AppHeader from "../components/AppHeader";
 import ProductList from "../components/ProductList";
 import { theme } from "../utils/Styles";
 import { Item } from "../utils/Types";
-import Icon from "react-native-vector-icons/MaterialIcons";
 
-export const ItemScreen = () => {
-  const [products, setProducts] = useState<Item[]>([]);
-
-  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
-
+export const ItemsInReceipt = () => {
   // TODO: DELETE AFTER
   const burger: Item = {
     itemID: 1,
@@ -33,7 +27,7 @@ export const ItemScreen = () => {
     name: "Noodle",
     quantity: 2,
     weight: null,
-    expiryDate: new Date(),
+    expiryDate: new Date(2024, 2, 25),
     price: 3,
     healthRating: 4,
     healthComment: "Noodles are good for you.",
@@ -51,7 +45,32 @@ export const ItemScreen = () => {
     healthComment: "Noodles are good for you.",
   };
 
+  const sortItems = (items: Item[]) => {
+    let x;
+    let swap = true;
+    while (swap == true) {
+      for(let i = 0; i < items.length - 1; i++) {
+        if(items[i].expiryDate > items[i + 1].expiryDate) {
+          x = items[i];
+          items[i] = items[i + 1];
+          items[i + 1] = x;
+          swap = true;
+          break;
+        }
+        else {
+          swap = false;
+        }
+      }
+    }
+    return items
+  }
+
   const listOfItems: Item[] = [noodle, burger, chicken];
+  const [products, setProducts] = useState<Item[]>(sortItems(listOfItems));
+
+  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
+  const [search, setSearch] = useState("");
+
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
@@ -77,9 +96,9 @@ export const ItemScreen = () => {
   //   fetchProducts();
   // }, []);
 
-  const updateSearch = (text: string) => {
+  const updateSearch = (items: Item[], text: string) => {
     if (text.valueOf() === "") {
-      setFilteredProducts(products);
+      setProducts(products);
     } else {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
@@ -90,16 +109,28 @@ export const ItemScreen = () => {
     setSearch(text);
   };
 
+  
+
   return (
     <View style={styles.background}>
-      <AppHeader title={"My Fridge"} />
-      <View style={{ paddingTop: 30 }}/>
+      <AppHeader title={"Fridge Items"} />
+      <View style={{ padding: 5 }}>
+        {/* <SearchBar
+          placeholder="Search for items"
+          onChangeText={updateSearch}
+          leftIcon={<Icon name="search"/>}
+          value={search}
+          platform="ios"
+          inputStyle={{ backgroundColor: theme.colors.surface }}
+          inputContainerStyle={{ backgroundColor: theme.colors.surface }}
+        /> */}
+      </View>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={{ backgroundColor: theme.colors.background }}
       >
         {/* TODO: CHANGE THIS TO PRODUCTS/FILTERED PRODUCTS */}
-        <ProductList items={listOfItems} />
+        <ProductList items={products} />
       </ScrollView>
     </View>
   );
@@ -113,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ItemScreen;
+export default ItemsInReceipt;
