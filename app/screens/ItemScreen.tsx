@@ -21,6 +21,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import AppHeader from "../components/AppHeader";
 import { commonStyles, theme } from "../utils/Styles";
 import { ScannerParamList } from "../utils/Types";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 type ItemsScreenRouteProp = RouteProp<ScannerParamList, "ItemScreen">;
 
@@ -29,7 +30,9 @@ interface ItemsScreenProps {
 }
 
 const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
-  const { itemID } = route.params;
+  const { itemID, justAdded } = route.params;
+  const scannerNavigation =
+    useNavigation<StackNavigationProp<ScannerParamList>>();
   const initialdata = {
     name: "Apple",
     quantity: 20,
@@ -148,9 +151,10 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
     <View style={styles.container}>
       <AppHeader
         title={"Items"}
-        // TODO
-        // TODO
-        onBackIcon={<Icon name="undo" size={20} color={theme.colors.accent} />}
+        onBackIcon={
+          <Icon name="arrow-back" size={24} color={theme.colors.background} />
+        }
+        onBackPress={() => scannerNavigation.goBack()}
       />
       <SafeAreaView style={commonStyles.safeAreaView}>
         {/*Image*/}
@@ -232,29 +236,43 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
         </View>
         <Text style={styles.healthComment}>{data.healthComment}</Text>
         <View style={styles.buttonContainer}>
-          <Button
-            title={"Eat"}
-            titleStyle={{ fontWeight: "bold", fontSize: 27 }}
-            color="red"
-            buttonStyle={{
-              backgroundColor: theme.colors.primary,
-              height: 70,
-              width: 130,
-              borderRadius: 10,
-            }}
-            // TODO
-          />
-          <Button
-            title={"Trash"}
-            titleStyle={{ fontWeight: "bold", fontSize: 27 }}
-            buttonStyle={{
-              backgroundColor: theme.colors.accent,
-              height: 70,
-              width: 130,
-              borderRadius: 10,
-            }}
-            onPress={() => navigation.goBack()} // TODO
-          />
+          {justAdded ? (
+            <Button
+              title="Save"
+              titleStyle={{ fontWeight: "bold", fontSize: 20 }}
+              buttonStyle={{
+                backgroundColor: theme.colors.primary,
+                height: 50,
+                width: 130,
+                borderRadius: 10,
+              }}
+            />
+          ) : (
+            <>
+              <Button
+                title={"Eat"}
+                titleStyle={{ fontWeight: "bold", fontSize: 20 }}
+                color="red"
+                buttonStyle={{
+                  backgroundColor: theme.colors.primary,
+                  height: 50,
+                  width: 130,
+                  borderRadius: 10,
+                }}
+              />
+              <Button
+                title={"Trash"}
+                titleStyle={{ fontWeight: "bold", fontSize: 20 }}
+                color="red"
+                buttonStyle={{
+                  backgroundColor: theme.colors.accent,
+                  height: 50,
+                  width: 130,
+                  borderRadius: 10,
+                }}
+              />
+            </>
+          )}
         </View>
 
         {popupVisible && (

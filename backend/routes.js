@@ -9,7 +9,7 @@ const { pool } = require("./database");
 
 const { OpenAI } = require("openai");
 
-const OPEN_AI_API_KEY = "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";
+const OPEN_AI_API_KEY = "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";
 
 module.exports.initializeRoutes = (app) => {
   app.get("/api", function (req, res, next) {

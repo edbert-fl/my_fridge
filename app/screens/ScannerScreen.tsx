@@ -60,9 +60,7 @@ const ScannerScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
 
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
-
-  const scannerNavigation =
-    useNavigation<StackNavigationProp<ScannerParamList>>();
+  const scannerNavigation = useNavigation<StackNavigationProp<ScannerParamList>>();
 
   useEffect(() => {
     requestPermissions();
@@ -192,29 +190,30 @@ const ScannerScreen = () => {
     try {
       setLoading(true);
       const picture = await takePicture();
-      const response = await sendReceiptToServer(picture as string);
+      // const response = await sendReceiptToServer(picture as string);
+      const response = {} // Temporary
 
       // Make a call to create a receipt
-      const dateOfPurchase = new Date(
-        response.result.date_of_purchase
-      ).toLocaleDateString("en-US");
+      // const dateOfPurchase = new Date(
+      //   response.result.date_of_purchase
+      // ).toLocaleDateString("en-US");
 
       if (response) {
         try {
-          const requestBody = {
-            userID: (currUser as User).userID,
-            store_name: response.result.store_name,
-            date_of_purchase: dateOfPurchase,
-            health_rating: response.result.health_rating,
-          };
+          // const requestBody = {
+          //   userID: (currUser as User).userID,
+          //   store_name: response.result.store_name,
+          //   date_of_purchase: dateOfPurchase,
+          //   health_rating: response.result.health_rating,
+          // };
 
-          const createReceiptResponse = await axios.post(
-            `${SERVER_URL}/receipts`,
-            requestBody
-          );
-          const receiptID = createReceiptResponse.data.receipt.receiptID;
-          console.log("RECEIPT\n\n\n\n", createReceiptResponse);
-          console.log(createReceiptResponse.data);
+          // const createReceiptResponse = await axios.post(
+          //   `${SERVER_URL}/receipts`,
+          //   requestBody
+          // );
+          // const receiptID = createReceiptResponse.data.receipt.receiptID;
+          const receiptID =  1 // Temporary
+
           scannerNavigation.navigate("ItemsInReceipt", {
             receiptID: receiptID,
           });

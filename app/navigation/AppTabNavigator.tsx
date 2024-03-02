@@ -24,6 +24,8 @@ import ProfileScreen from "../screens/ProfileScreen";
 import { TabParamList } from "../utils/Types";
 import ItemScreen from "../screens/ItemScreen";
 import ItemsInReceipt from "../screens/ItemsInReceipt";
+import ScannerStackNavigator from "./ScannerStackNavigator";
+import FridgeScreen from "../screens/FridgeScreen";
 
 interface IconMap {
   [key: string]: IconInformation;
@@ -41,10 +43,8 @@ const AppTabNavigator = () => {
 
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
 
-  const ItemsInReceiptFC = () => <ItemsInReceipt route={useRoute()}/>
-
   const navigateToScanner = () => {
-    navigation.navigate("Scanner");
+    navigation.navigate("ScannerStackNavigator");
   };
 
   const getTabBarVisibility = (route: any) => {
@@ -52,7 +52,7 @@ const AppTabNavigator = () => {
       ? route.state.routes[route.state.index].name
       : route.name;
 
-    if (routeName === "Scanner") {
+    if (routeName === "ScannerStackNavigator") {
       return false;
     }
 
@@ -189,8 +189,8 @@ const AppTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Scanner"
-        component={ScannerScreen}
+        name="ScannerStackNavigator"
+        component={ScannerStackNavigator}
         options={{
           headerShown: false,
           tabBarButton: (focused) => (
@@ -206,7 +206,7 @@ const AppTabNavigator = () => {
       />
       <Tab.Screen
         name="ItemScreen"
-        component={ItemsInReceiptFC}
+        component={FridgeScreen}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (

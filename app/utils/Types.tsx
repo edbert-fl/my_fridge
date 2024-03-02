@@ -52,15 +52,15 @@ export interface BoundingBox {
 export type TabParamList = {
   Home: undefined;
   ReceiptHistory: undefined;
-  Scanner: undefined;
+  ScannerStackNavigator: undefined;
   Notification: undefined;
   Profile: undefined;
 };
 
 export type ScannerParamList = {
   Scanner: undefined,
-  ItemsInReceipt: { receiptID?: number },
-  ItemScreen: { itemID: number }
+  ItemsInReceipt: { receiptID?: number | undefined },
+  ItemScreen: { itemID: number, justAdded: boolean }
 };
 
 export type RootStackParamList = {
