@@ -1,19 +1,33 @@
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native'
 import React,{useState, useEffect} from 'react'
-import { MainHeader } from '../components/MainHeader'
+import { rotdList } from '../utils/defaultGoals';
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { data } from '../utils/defaultGoals';
-
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import { theme } from '../utils/Styles';
 import { Item, Promo } from '../utils/Types';
 import { BackgroundImage } from 'react-native-elements/dist/config';
+import FamousRecipeModal from '../components/famousRecipeModal';
+import DefaultRecipes from './DefaultRecipes';
+import SpecificRecipe from './SpecificRecipe';
+const Stack = createNativeStackNavigator();
 const HomeScreen = () => {
   const [fridgeItems, setFridgeItems] = useState<Item[]>([]);
-  const [currentPromos, setCurrentPromos] = useState<Promo[]>([])
+  const [popularRecipesPressed, setPopularsPressed] = useState<boolean>(false);
+  const [currentPopularRecipe, setCurrentPopularRecipe] = useState([]);
+  const [recipeGoal, setRecipeGoal] = useState<string>("");
+  const [rotd, setRotd] = useState([])
+  const [viewRotd, setViewRotd] = useState(false)
   // make new feature to scan nutrition value as well.
-
+  useEffect(()=>{
+    const index = Math.floor(Math.random()* rotdList.length);
+    setRotd(rotdList[index])
+    console.log(rotdList[index]);
+    
+  },[])
   const currImg = (goal:string) => (
     goal === "Lose Weight" ?
      <Image source={require("../../assets/loseweight_bg.jpg")} style={styles.categoryImage} /> 
@@ -21,12 +35,21 @@ const HomeScreen = () => {
      ? <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} /> 
      : <Image source={require("../../assets/diseaseprevention_bg.jpg")} style={styles.categoryImage} />
   )
-
+    if (popularRecipesPressed) {
+        return (
+        <DefaultRecipes currentPopularRecipe={currentPopularRecipe} setPopularsPressed={setPopularsPressed} recipeGoal={recipeGoal} />
+       )
+    }
+    if (viewRotd) {
+      return (
+        <SpecificRecipe mealDetail={rotd} setSpecifyRecipe={setViewRotd} />
+      )
+    }
   return (
     <ScrollView style={{marginTop:40}}>
     <SafeAreaView style={styles.background}>
         
-          <View style={[styles.promotionalArtContainer, {width:330, marginRight:5}]}>
+          <TouchableOpacity style={[styles.promotionalArtContainer, {width:330, marginRight:5}]} onPress={()=>setViewRotd(true)} >
           <View style={styles.blackBg} />
           <Image source={require("../../assets/rotd_placeholder.jpg")} style={[styles.categoryImage, {opacity:0.9}]} />
             <Text style={[styles.goalHeading,{color:"beige", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
@@ -35,25 +58,30 @@ const HomeScreen = () => {
             <Text style={[styles.goalHeading,{color:"white", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
               THE DAY
             </Text>
-          </View>
+          </TouchableOpacity>
         <Text style={styles.heading}>Your Fridge</Text>
         <View style={styles.categories} >
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
             {fridgeItems.length === 0 ? (
               <View style={{flexDirection:"row"}} >
                 
-                <View style={styles.categoryPlaceholder} >
-                  <Image source={require("../../assets/placeholder1.jpg")} style={styles.fridgePlaceholderImg} />
-                </View>
-                <View style={styles.categoryPlaceholder} >
-                <Image source={require("../../assets/placeholder2.jpg")} style={styles.fridgePlaceholderImg} />
-                </View>
-                <View style={styles.categoryPlaceholder} >
-                <Image source={require("../../assets/placeholder3.jpg")} style={styles.fridgePlaceholderImg} />
-                </View>
-                <View style={styles.categoryPlaceholder} >
-                <Image source={require("../../assets/placeholder4.jpg")} style={styles.fridgePlaceholderImg} />
-                </View>
+                  
+                        
+                      <TouchableOpacity style={styles.categoryPlaceholder}  >
+                        <Image source={require("../../assets/placeholder1.jpg")} style={styles.fridgePlaceholderImg} />
+                      </TouchableOpacity>
+                    
+                      <TouchableOpacity style={styles.categoryPlaceholder}  >
+                        <Image source={require("../../assets/placeholder2.jpg")} style={styles.fridgePlaceholderImg} />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.categoryPlaceholder} >
+                        <Image source={require("../../assets/placeholder3.jpg")} style={styles.fridgePlaceholderImg} />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.categoryPlaceholder} >
+                        <Image source={require("../../assets/placeholder4.jpg")} style={styles.fridgePlaceholderImg} />
+                      </TouchableOpacity>
+                
+                
               </View>
             ) : (
               fridgeItems.map((item) => {
@@ -101,12 +129,19 @@ const HomeScreen = () => {
                 ):(
                   <View style={styles.promosContainer}>
                   {data.map((curr_data, i)=> (
-                    <View style={styles.promotionalArtContainer} key={i} >
+                    <TouchableOpacity style={styles.promotionalArtContainer} key={i} 
+                      onPress={()=> {
+                          setPopularsPressed(true);
+                          setCurrentPopularRecipe(curr_data.recipes)
+                          setRecipeGoal(curr_data.goal)
+                          console.log(popularRecipesPressed)
+                      }}
+                    >
                         <View style={styles.blackBg} />
                         {currImg(curr_data.goal)}
                         <Text style={styles.goalHeading} >{curr_data.goal}</Text>
                         <Text style={styles.goalDescription} >{curr_data.desc}</Text>
-                    </View>
+                    </TouchableOpacity>
                   ) )}
                   </View>
                   

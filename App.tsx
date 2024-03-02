@@ -9,6 +9,7 @@ import HomeScreen from "./app/screens/HomeScreen";
 import { MainHeader } from "./app/components/MainHeader";
 import AppTabNavigator from "./app/navigation/AppTabNavigator";
 import ProfileScreen from "./app/screens/ProfileScreen";
+import DefaultRecipes from "./app/screens/DefaultRecipes";
 export default function App() {
 
   const [currUser, setCurrUser] = useState<User | null>(null);
@@ -67,6 +68,7 @@ export default function App() {
         {/* <AuthStackNavigator /> */}
         {/* <ProfileScreen/> */}
         <AppTabNavigator />
+        {/* <DefaultRecipes /> */}
         {/* <MainHeader title="My FRIDGE" /> */}
       </AppContext.Provider>
     </NavigationContainer>
