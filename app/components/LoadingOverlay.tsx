@@ -52,13 +52,13 @@ import LoadingAnimation from "./LoadingAnimation";
       <>
         {loadingOpen ? (
           <View style={styles.container}>
+            <LoadingAnimation/>
             <Animated.View
               style={{
                 ...styles.overlay,
                 opacity: backgroundFadeAnim,
               }}
             >
-              <LoadingAnimation/>
             </Animated.View>
           </View>
         ) : null}

@@ -10,10 +10,10 @@ interface HistoryListProps {
 const HistoryList: React.FC<HistoryListProps> = ({ Receipts }) => {
   return (
     <View style={styles.ProductContainer}>
-      {Receipts.map((receipt, index) => (
-        <TouchableOpacity>
+      {Receipts.map((receipt) => (
+        <TouchableOpacity key={receipt.receiptID}>
           <View>
-            <HistoryCard key={index} receipt={receipt} />
+            <HistoryCard receipt={receipt} />
           </View>
         </TouchableOpacity>
       ))}

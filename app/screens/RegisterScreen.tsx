@@ -18,7 +18,7 @@ import axios from "axios";
 import { useAppContext } from "../context/AppContext";
 
 const RegisterScreen = () => {
-  const {currUser, setCurrUser} = useAppContext();
+  const {setTempCurrUser} = useAppContext();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,34 +34,18 @@ const RegisterScreen = () => {
     navigation.navigate("HealthConditions");
   };
 
-  const signUp = async () => {
+  const signUp = () => {
+    setTempCurrUser({
+      userID: 0, 
+      username: displayName,
+      email: email,
+      salt: "", 
+      password: password,
+      createdAt: new Date(),
+      healthConditions: null,
+      healthGoals: null
+    });
     navigateToHealthConditions();
-    setLoading(true);
-    try {
-      let response = null;
-      response = await axios.post(`${SERVER_URL}/user/register`, {
-        displayName: displayName,
-        email: email,
-        password: password,
-        currUser: currUser,
-      });
-      if (response.data.user) {
-        const userData = response.data.user;
-        setCurrUser({
-          userID: userData.id,
-          username: userData.username,
-          email: userData.email,
-          salt: userData.salt,
-          createdAt: new Date(userData.created_at),
-        })
-      }
-
-    } catch (error: any) {
-      console.log(error);
-      alert("Registration failed: " + error.message);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleLogin = () => {
@@ -112,7 +96,7 @@ const RegisterScreen = () => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-      <LoadingOverlay loading={loading} />
+      {/* <LoadingOverlay loading={loading} /> */}
     </View>
   );
 };
@@ -135,7 +119,7 @@ export const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   link: {
-    color: theme.colors.primary,
+    color: theme.colors.placeholderText,
     fontSize: 16,
   },
   logo: {
