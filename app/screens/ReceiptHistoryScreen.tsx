@@ -5,6 +5,8 @@ import AppHeader from "../components/AppHeader";
 import HistoryList from "../components/HistoryList";
 import { theme } from "../utils/Styles";
 import { Receipt } from "../utils/Types";
+import {axios} from "axios";
+import { DATABASE_URL } from "../utils/Helpers";
 
 export const ReceiptHistory = () => {
   const ColesReceipt_1: Receipt = {
@@ -53,6 +55,16 @@ export const ReceiptHistory = () => {
   };
 
   const [products, setProducts] = useState<Receipt[]>(sortReceipt(receipts));
+
+  const fetchReceiptById = async (receiptID: Number) => {
+    try {
+      const response = await axios.get(`http://${DATABASE_URL}/items/${receiptID}`);
+      console.log("Receipt: ", response.data);
+      return response.data;
+    } catch (error) {
+      console.log(`Error fetching receipt: ${error}`);
+    }
+  }
 
   return (
     <View style={styles.background}>
