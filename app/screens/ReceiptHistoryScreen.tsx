@@ -56,16 +56,6 @@ export const ReceiptHistory = () => {
 
   const [products, setProducts] = useState<Receipt[]>(sortReceipt(receipts));
 
-  const fetchReceiptById = async (receiptID: Number) => {
-    try {
-      const response = await axios.get(`http://${DATABASE_URL}/items/${receiptID}`);
-      console.log("Receipt: ", response.data);
-      return response.data;
-    } catch (error) {
-      console.log(`Error fetching receipt: ${error}`);
-    }
-  }
-
   return (
     <View style={styles.background}>
       <AppHeader title={"My Receipts"} />
