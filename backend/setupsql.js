@@ -14,12 +14,25 @@ const createTables = async () => {
     // Connect to the database
     const client = await pool.connect();
 
-    // Create Users table
-    await client.query(`
+    // Check if the -d flag is provided
+    const deleteTablesFlag = process.argv.includes("-d");
+
+    if (deleteTablesFlag) {
+      // Drop all tables if the -d flag is provided
+      await client.query(`
+        DROP TABLE IF EXISTS Items;
+        DROP TABLE IF EXISTS Receipts;
+        DROP TABLE IF EXISTS Users;
+      `);
+      console.log("Tables deleted successfully");
+    } else {
+      // Create Users table
+      await client.query(`
             CREATE TABLE IF NOT EXISTS Users (
                 userID SERIAL PRIMARY KEY,
                 username VARCHAR(255) NOT NULL,
                 email VARCHAR(255) UNIQUE NOT NULL,
+                hashedPassword VARCHAR(255) NOT NULL,
                 salt VARCHAR(255) NOT NULL,
                 createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 healthConditions VARCHAR(255)[] DEFAULT NULL,
@@ -27,8 +40,8 @@ const createTables = async () => {
             )
         `);
 
-    // Create Receipts table
-    await client.query(`
+      // Create Receipts table
+      await client.query(`
             CREATE TABLE IF NOT EXISTS Receipts (
                 receiptID SERIAL PRIMARY KEY,
                 userID INT NOT NULL,
@@ -39,8 +52,8 @@ const createTables = async () => {
             )
         `);
 
-    // Create Items table
-    await client.query(`
+      // Create Items table
+      await client.query(`
             CREATE TABLE IF NOT EXISTS Items (
                 itemID SERIAL PRIMARY KEY,
                 receiptID INT NOT NULL,
@@ -54,18 +67,18 @@ const createTables = async () => {
                 FOREIGN KEY (receiptID) REFERENCES Receipts(receiptID)
             )
         `);
+      console.log("Tables created successfully");
+    }
 
     // Release the client
     client.release();
-
-    console.log("Tables created successfully");
   } catch (error) {
-    console.error("Error creating tables:", error);
+    console.error("Error creating/deleting tables:", error);
   } finally {
     // End the client pool to close all connections
     await pool.end();
   }
 };
 
-// Call the function to create tables
+// Call the function to create/delete tables
 createTables();
