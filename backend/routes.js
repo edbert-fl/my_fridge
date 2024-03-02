@@ -9,6 +9,8 @@ const { pool } = require("./database");
 
 const { OpenAI } = require("openai");
 
+const OPEN_AI_API_KEY = "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";
+
 module.exports.initializeRoutes = (app) => {
   app.get("/api", function (req, res, next) {
     res.json({ msg: "This is CORS-enabled for all origins!" });
@@ -119,7 +121,7 @@ module.exports.initializeRoutes = (app) => {
 
     // Some magic...
     const openai = new OpenAI({
-      apiKey: "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",
+      apiKey: OPEN_AI_API_KEY,
     });
     const userPrompt = `${receiptData} \n this person has ${healthConditions} and is aiming for ${healthGoals} provide recommendation`;
     const systemPrompt = `Use the following step-by-step instructions to respond to user inputs that come from scanning a receipt and transform it into a JSON data. Never assume the store. If there is no data in any field then return null.
@@ -196,7 +198,7 @@ module.exports.initializeRoutes = (app) => {
   app.post("generate/recipe", async function (req, res, next) {
     const { receiptData, healthGoals, healthConditions } = req.body;
     const openai = new OpenAI({
-      apiKey: "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",
+      apiKey: OPEN_AI_API_KEY,
     });
     const userPrompt = `5 recipes and macros for ${healthGoals} from beef chicken potato`;
     const systemPrompt = `you are a helpful assistant that is given list of ingredients and u need to give an JSON output like this:
@@ -304,7 +306,7 @@ module.exports.initializeRoutes = (app) => {
     const { userID } = req.params;
 
     try {
-      const query = `SELECT * FROM Receipt WHERE userID = $1`;
+      const query = `SELECT * FROM Receipts WHERE userID = $1`;
       const { rows } = await pool.query(query, [userID]);
       res.json({ receipts: rows });
     } catch (error) {
@@ -338,7 +340,7 @@ module.exports.initializeRoutes = (app) => {
     try {
       const query = `SELECT i.* 
                        FROM Item i
-                       JOIN Receipt r ON i.receiptID = r.receiptID
+                       JOIN Receipts r ON i.receiptID = r.receiptID
                        WHERE r.userID = $1 AND i.expiryDate > CURRENT_DATE`;
       const { rows } = await pool.query(query, [userID]);
       res.json({ items: rows });
@@ -354,14 +356,16 @@ module.exports.initializeRoutes = (app) => {
   app.post("/receipts", async function (req, res) {
     const { userID, store, dateOfPurchase, healthRating } = req.body;
 
+    console.log(userID, store, dateOfPurchase, healthRating)
+
     try {
-      const query = `INSERT INTO Receipt (userID, store, dateOfPurchase, healthRating)
+      const query = `INSERT INTO Receipts (userID, store, dateOfPurchase, healthRating)
                        VALUES ($1, $2, $3, $4) RETURNING *`;
       const { rows } = await pool.query(query, [
         userID,
-        store,
-        dateOfPurchase,
-        healthRating,
+        store_name,
+        date_of_purchase,
+        health_rating,
       ]);
       res.json({ receipt: rows[0] });
     } catch (error) {
