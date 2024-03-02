@@ -5,8 +5,10 @@ import {
   StyleSheet,
   Platform,
   Alert,
+  Dimensions,
+  Pressable,
 } from "react-native";
-import { AutoFocus, Camera, CameraType, FlashMode } from "expo-camera";
+import { Camera, CameraType, FlashMode } from "expo-camera";
 import { theme } from "../utils/Styles";
 import axios from "axios";
 import FormData from "form-data";
@@ -16,7 +18,9 @@ import LoadingScreen from "../components/LoadingOverlay";
 import ScanningOverlay from "../components/ScanningAnimation";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { TabParamList } from "../utils/Types";
+import { BoundingBox, TabParamList } from "../utils/Types";
+import ImageManipulator from 'expo-image-manipulator';
+import BoundingBoxOverlay from "../components/BoundingBoxOverlay";
 
 const ScannerScreen = () => {
   const cameraRef = useRef(null);
@@ -26,11 +30,38 @@ const ScannerScreen = () => {
     boolean | null
   >(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [bbox, setBbox] = useState<BoundingBox>({ x: 0, y: 0, width: 0, height: 0 });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     requestPermissions();
+    handleBoundingBoxSelection();
   }, []);
+
+  const handleBoundingBoxSelection = () => {
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
+
+    const width = 0.8 * windowWidth; 
+    const height = 0.4 * windowHeight; 
+
+    const x = (windowWidth - width) / 2;
+    const y = (windowHeight - height) / 6;
+
+    setBbox({ x, y, width, height });
+  };
+
+  const cropImage = async (imageUri: string) => {
+    const { x, y, width, height } = bbox;
+    const croppedImage = await ImageManipulator.manipulateAsync(
+      imageUri,
+      [{ crop: { originX: x, originY: y, width, height } }],
+      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+    );
+    return croppedImage.uri;
+  };
+  
+  
 
   const navigation = useNavigation<StackNavigationProp<TabParamList>>();
 
@@ -99,8 +130,9 @@ const ScannerScreen = () => {
       const photo = await (cameraRef.current as Camera).takePictureAsync(
         options
       );
-      setCapturedPhoto(photo.uri);
-      return photo.uri;
+      const croppedImage = await cropImage(photo.uri)
+      setCapturedPhoto(croppedImage);
+      return croppedImage;
     } else {
       console.error("Camera handle is null");
       return null;
@@ -127,35 +159,35 @@ const ScannerScreen = () => {
       {Platform.OS === "ios" ? (
         <>
           <View style={styles.cameraButtonContainer}>
-            <TouchableOpacity style={styles.backButton} onPress={navigateToHomeScreen}>
+            <Pressable style={styles.scannerHeaderButton} onPress={navigateToHomeScreen}>
               <Icon
                 name="arrow-back"
-                size={28}
+                size={24}
                 color={theme.colors.background}
               />
-            </TouchableOpacity>
+            </Pressable>
             {flashOn ? (
-              <TouchableOpacity
-                style={styles.flashButton}
+              <Pressable
+                style={styles.scannerHeaderButton}
                 onPress={toggleFlash}
               >
                 <Icon
                   name="flash-on"
-                  size={28}
+                  size={24}
                   color={theme.colors.background}
                 />
-              </TouchableOpacity>
+              </Pressable>
             ) : (
-              <TouchableOpacity
-                style={styles.flashButton}
+              <Pressable
+                style={styles.scannerHeaderButton}
                 onPress={toggleFlash}
               >
                 <Icon
                   name="flash-off"
-                  size={28}
+                  size={24}
                   color={theme.colors.background}
                 />
-              </TouchableOpacity>
+              </Pressable>
             )}
           </View>
           <Camera
@@ -165,7 +197,9 @@ const ScannerScreen = () => {
             flashMode={flashOn ? FlashMode.on : FlashMode.off}
             useCamera2Api 
             autoFocus
-          ></Camera>
+          >
+            <BoundingBoxOverlay boundingBox={bbox}/>
+          </Camera>
         </>
       ) : (
         <Camera
@@ -176,22 +210,23 @@ const ScannerScreen = () => {
           useCamera2Api 
           autoFocus
         >
-          <TouchableOpacity style={styles.backButton} onPress={navigateToHomeScreen}>
-            <Icon name="arrow-back" size={28} color={theme.colors.background} />
-          </TouchableOpacity>
+          <Pressable style={styles.scannerHeaderButton} onPress={navigateToHomeScreen}>
+            <Icon name="arrow-back" size={24} color={theme.colors.background} />
+          </Pressable>
           {flashOn ? (
-            <TouchableOpacity style={styles.flashButton} onPress={toggleFlash}>
-              <Icon name="flash-on" size={28} color={theme.colors.background} />
-            </TouchableOpacity>
+            <Pressable style={styles.scannerHeaderButton} onPress={toggleFlash}>
+              <Icon name="flash-on" size={24} color={theme.colors.background} />
+            </Pressable>
           ) : (
-            <TouchableOpacity style={styles.flashButton} onPress={toggleFlash}>
+            <Pressable style={styles.scannerHeaderButton} onPress={toggleFlash}>
               <Icon
                 name="flash-off"
-                size={28}
+                size={24}
                 color={theme.colors.background}
               />
-            </TouchableOpacity>
+            </Pressable>
           )}
+          <BoundingBoxOverlay boundingBox={bbox}/>
         </Camera>
       )}
       <ScanningOverlay />
@@ -216,7 +251,6 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   scannerInfoContainer: {
-    position: "absolute",
     bottom: 0,
     left: 0,
     width: "100%",
@@ -226,20 +260,10 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     alignItems: "center",
   },
-  cameraButtonContainer: {
-    height: "15%",
-    width: "100%",
-    backgroundColor: theme.colors.background,
-    borderBottomEndRadius: 20,
-    borderBottomStartRadius: 20,
-  },
   buttonContainer: {
     width: 75,
     marginRight: theme.spacing.md,
     alignItems: "center",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
   },
   buttonLabel: {
     fontSize: 14,
@@ -247,7 +271,7 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   button: {
-    backgroundColor: theme.colors.accent,
+    backgroundColor: theme.colors.primary,
     borderRadius: 70,
     padding: theme.spacing.md,
     marginTop: theme.spacing.md,
@@ -257,27 +281,21 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 80,
   },
-  backButton: {
-    position: "absolute",
-    top: 50,
-    left: 25,
-    backgroundColor: theme.colors.faded,
-    width: 40,
-    height: 40,
-    borderRadius: 40,
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  cameraButtonContainer: {
+    height: "13%",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    backgroundColor: theme.colors.background,
+    zIndex: 99
   },
-  flashButton: {
-    position: "absolute",
-    top: 50,
-    right: 25,
+  scannerHeaderButton: {
     backgroundColor: theme.colors.faded,
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 40,
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
