@@ -15,6 +15,31 @@ module.exports.initializeRoutes = (app) => {
         res.json({msg: "This is CORS-enabled for all origins!"});
     })
 
+    app.post("/user/login", async function(req, res) {
+        const { currUser } = req.body;
+        let client;
+
+        try {
+            client = await pool.connect();
+            const result = await client.query(
+                "SELECT * FROM USERS WHERE userID = $1",
+                [currUser.userID,]
+            );
+            console.log("Resulting Data:", result.rows[0]);
+            res.json({
+                user: result.rows[0],
+                message: "User login successfully!",
+            })
+        } catch (error) {
+            console.log("Error logging in user", error);
+            res.status(500).json({error: "Internal Server Error", details: error.message});
+        } finally {
+            if (client) {
+                client.release();
+            }
+        }
+    })
+
     app.post("/user/register", async function(req, res) {
         const { displayName, email, password } = req.body;
         let client;
