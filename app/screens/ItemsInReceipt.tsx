@@ -62,7 +62,7 @@ export const ItemsInReceipt = () => {
         }
       }
     }
-    return items
+    return items;
   }
 
   const listOfItems: Item[] = [noodle, burger, chicken];
@@ -103,7 +103,8 @@ export const ItemsInReceipt = () => {
       const filtered = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
       );
-      setProducts(filtered);
+      setProducts(sortItems(filtered));
+      
     }
 
     setSearch(text);
@@ -114,7 +115,7 @@ export const ItemsInReceipt = () => {
   return (
     <View style={styles.background}>
       <AppHeader title={"Fridge Items"} />
-      <View style={{ padding: 5 }}>
+      <View style={{ padding: 5 }}> 
         <SearchBar
           placeholder="Search for items"
           onChangeText={updateSearch}

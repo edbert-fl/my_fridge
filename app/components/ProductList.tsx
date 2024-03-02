@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import React from "react";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { Item } from "../utils/Types";
 import ProductCard from "./ProductCard";
 
@@ -20,24 +20,14 @@ const ProductList: React.FC<ProductListProps> = ({ items }) => {
     healthComment: "Burgers are not good for you. Eat in moderation.",
   };
 
-  const noodle: Item = {
-    itemID: 2,
-    receiptID: 2,
-    name: "noodle",
-    quantity: 2,
-    weight: null,
-    expiryDate: new Date(),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
-
   return (
     <View>
       {items.map((item, index) => (
-        <View>
-          <ProductCard key={index} item={item} />
-        </View>
+        <TouchableOpacity>
+          <View>
+            <ProductCard key={index} item={item} />
+          </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -46,7 +36,5 @@ const ProductList: React.FC<ProductListProps> = ({ items }) => {
 export default ProductList;
 
 const styles = StyleSheet.create({
-  ProductContainer: {
-
-  }
+  ProductContainer: {},
 });
