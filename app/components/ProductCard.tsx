@@ -25,11 +25,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
           </View>
           <View>
             <Text style={styles.expiryDate}>
+<<<<<<< HEAD
               Expires {item.expiryDate.toLocaleDateString()}
             </Text>
           </View>
           <View>
             <Text>Health Rating </Text>
+=======
+              Expiry Date :{item.expiryDate.toLocaleDateString()}
+            </Text>
+          </View>
+          <View>
+            <Text>Health Rating: </Text>
+>>>>>>> 80a98ce (Items in receipt)
             <View style={styles.leafs}>
               {leafRatingOptions.map((option) => (
                     <MaterialIcons
