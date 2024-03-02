@@ -6,9 +6,10 @@ export interface User {
   username: string,
   email: string,              // email format
   salt: string,
+  password?: string,
   createdAt: Date
-  healthConditions?: string,   // comma seperated values: diabetes, lactose intolerance
-  healthGoals?: string,        // comma seperated values: lose weight, build muscle, eat healthier
+  healthConditions?: String[] | null,   // comma seperated values: diabetes, lactose intolerance
+  healthGoals?: String[] | null,        // comma seperated values: lose weight, build muscle, eat healthier
 }
 
 export interface Item {
@@ -28,7 +29,6 @@ export interface Receipt {
   receiptID: number,
   store: string,
   dateOfPurchase: Date,
-  totalSpent: number,
   healthRating: number
 }
 
@@ -40,13 +40,28 @@ export interface Promo {
   dateOfEnding: Date
 }
 
+export interface BoundingBox {
+  x: number,
+  y: number,
+  width: number,
+  height:number
+}
+
 // Navigation Props
 
-export type RootBottomTabParamList = {
+export type TabParamList = {
   Home: undefined;
-  ClockIn: undefined;
-  Schedule: undefined;
-}
+  ReceiptHistory: undefined;
+  ScannerStackNavigator: undefined;
+  Notification: undefined;
+  Profile: undefined;
+};
+
+export type ScannerParamList = {
+  Scanner: undefined,
+  ItemsInReceipt: { receiptID?: number | undefined },
+  ItemScreen: { itemID: number, justAdded: boolean }
+};
 
 export type RootStackParamList = {
   Login: undefined;

@@ -9,13 +9,23 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.22.3",
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@react-native-community/datetimepicker": "^7.6.2",
     "@react-navigation/bottom-tabs": "^6.5.16",
     "@react-navigation/native": "^6.1.14",
     "@react-navigation/native-stack": "^6.9.22",
     "@react-navigation/stack": "^6.3.25",
+    "@rneui/base": "^4.0.0-rc.8",
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
     "expo": "~50.0.8",
+    "expo-camera": "^14.0.5",
+    "expo-image-manipulator": "^11.8.0",
     "expo-status-bar": "~1.11.1",
+    "express": "^4.18.3",
+    "framer-motion": "^11.0.8",
+    "lottie-react-native": "^6.6.0",
+    "openai": "^4.28.4",
     "react": "18.2.0",
     "react-native": "0.73.4",
     "react-native-elements": "^3.4.3",
@@ -29,7 +39,8 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "^18.2.61",
-    "@types/react-native-vector-icons": "^6.4.18"
+    "@types/react-native-vector-icons": "^6.4.18",
+    "nodemon": "^3.1.0"
   },
   "private": true
 }

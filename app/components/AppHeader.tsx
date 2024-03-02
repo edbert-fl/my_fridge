@@ -1,10 +1,14 @@
-import { View, Text, TouchableOpacity, GestureResponderEvent, StyleSheet } from 'react-native'
-import React, { ReactNode } from 'react'
-import { useNavigation } from '@react-navigation/native';
-// import { theme } from '../utils/StylesUtils';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-interface HeaderProps {
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+  } from "react-native";
+  import React, { ReactNode } from "react";
+  import { theme } from "../utils/Styles";
+  
+  interface HeaderProps {
     title: string;
     onBackPress?: () => void;
     onBackIcon?: string | ReactNode;
@@ -55,14 +59,12 @@ const Header: React.FC<HeaderProps> = ({ title, onBackPress, onRightPress, onBac
     );
 };
 
-export default Header;
-
 export const styles = StyleSheet.create({
     headerCenterContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       width: '100%',
-      flex: 3
+      flex: 3,
     },
     backButton: {
       paddingLeft: 10,
@@ -83,7 +85,7 @@ export const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-    //   backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primary,
       paddingTop: 50,
       padding: 15,
     },
@@ -100,3 +102,5 @@ export const styles = StyleSheet.create({
       fontWeight: 'bold',
     },
   })
+
+  export default Header;

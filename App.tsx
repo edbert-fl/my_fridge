@@ -13,7 +13,7 @@ import DefaultRecipes from "./app/screens/DefaultRecipes";
 export default function App() {
 
   const [currUser, setCurrUser] = useState<User | null>(null);
-  const [currOrganization, setCurrOrganization] = useState(null);
+  const [tempCurrUser, setTempCurrUser] = useState<User | null>(null);
 
   // Everytime app is loaded attempt to retrieve the userSession.
   useEffect(() => {
@@ -63,13 +63,11 @@ export default function App() {
         value={{
           currUser: currUser,
           setCurrUser: setCurrUser,
+          tempCurrUser: tempCurrUser,
+          setTempCurrUser: setTempCurrUser
         }}
       >
-        {/* <AuthStackNavigator /> */}
-        {/* <ProfileScreen/> */}
-        <AppTabNavigator />
-        {/* <DefaultRecipes /> */}
-        {/* <MainHeader title="My FRIDGE" /> */}
+        <AuthStackNavigator />
       </AppContext.Provider>
     </NavigationContainer>
   );

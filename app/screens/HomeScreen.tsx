@@ -60,44 +60,50 @@ const HomeScreen = () => {
             </Text>
           </TouchableOpacity>
         <Text style={styles.heading}>Your Fridge</Text>
-        <View style={styles.categories} >
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
+        <View style={styles.categories}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {fridgeItems.length === 0 ? (
-              <View style={{flexDirection:"row"}} >
-                
-                  
-                        
-                      <TouchableOpacity style={styles.categoryPlaceholder}  >
-                        <Image source={require("../../assets/placeholder1.jpg")} style={styles.fridgePlaceholderImg} />
-                      </TouchableOpacity>
-                    
-                      <TouchableOpacity style={styles.categoryPlaceholder}  >
-                        <Image source={require("../../assets/placeholder2.jpg")} style={styles.fridgePlaceholderImg} />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.categoryPlaceholder} >
-                        <Image source={require("../../assets/placeholder3.jpg")} style={styles.fridgePlaceholderImg} />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.categoryPlaceholder} >
-                        <Image source={require("../../assets/placeholder4.jpg")} style={styles.fridgePlaceholderImg} />
-                      </TouchableOpacity>
-                
-                
+              <View style={{ flexDirection: "row" }}>
+                <View style={styles.categoryPlaceholder}>
+                  <Image
+                    source={require("../../assets/placeholder1.jpg")}
+                    style={styles.fridgePlaceholderImg}
+                  />
+                </View>
+                <View style={styles.categoryPlaceholder}>
+                  <Image
+                    source={require("../../assets/placeholder2.jpg")}
+                    style={styles.fridgePlaceholderImg}
+                  />
+                </View>
+                <View style={styles.categoryPlaceholder}>
+                  <Image
+                    source={require("../../assets/placeholder3.jpg")}
+                    style={styles.fridgePlaceholderImg}
+                  />
+                </View>
+                <View style={styles.categoryPlaceholder}>
+                  <Image
+                    source={require("../../assets/placeholder4.jpg")}
+                    style={styles.fridgePlaceholderImg}
+                  />
+                </View>
               </View>
             ) : (
               fridgeItems.map((item) => {
                 return (
-                  <TouchableOpacity key={item.itemID} >
-                    <View key={item.itemID} style={styles.category} >
-                      <Text style={styles.categoryLabel} >{item.name}</Text>
+                  <TouchableOpacity key={item.itemID}>
+                    <View key={item.itemID} style={styles.category}>
+                      <Text style={styles.categoryLabel}>{item.name}</Text>
                       <Image style={styles.categoryImage} />
                     </View>
                   </TouchableOpacity>
-                )
+                );
               })
             )}
-            <View style={styles.categoryScrollEnd} >
+            <View style={styles.categoryScrollEnd}>
               <TouchableOpacity>
-                <View style={styles.categoryScrollEndCircle} >
+                <View style={styles.categoryScrollEndCircle}>
                   <Icon
                     style={{ alignSelf: "center" }}
                     name="arrow-forward"
@@ -144,57 +150,52 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                   ) )}
                   </View>
-                  
-                )}
-              </ScrollView>
-              
+                ))}
+              </View>
+            )}
+          </ScrollView>
         </View>
-    </SafeAreaView>
-    </ScrollView>
-  )
-}
+      </ScrollView>
+  );
+};
 const styles = StyleSheet.create({
   background: {
     height: "100%",
-    // backgroundColor:"orange"
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
-  promosContainer:{
-    width:"100%",
+  promosContainer: {
+    width: "100%",
     // marginTop:10,
-    gap:12,
+    gap: 12,
     height: 400,
-    alignItems:"center",
-    flexDirection:"row",
-    marginLeft:20
+    alignItems: "center",
+    flexDirection: "row",
+    marginLeft: 20,
   },
   promotionalArtContainer: {
     width: 300,
     height: 200,
     borderRadius: 20,
-    // marginTop: 10,
     backgroundColor: theme.colors.imagePlaceholder,
     zIndex: 1,
-    alignSelf:"center",
-    padding:40
+    alignSelf: "center",
+    padding: 40,
   },
   promotionalArt: {
     width: "80%",
     height: "60%",
     borderRadius: 20,
     zIndex: 2,
-
   },
   promotionLabel: {
     fontSize: 36,
-    color: 'white',
-    textShadowColor: 'black',
+    color: "white",
+    textShadowColor: "black",
     textShadowRadius: 80,
-    fontWeight: 'bold',
-    // position: 'absolute',
+    fontWeight: "bold",
     bottom: 10,
     right: 25,
-    zIndex: 3
+    zIndex: 3,
   },
   heading: {
     fontSize: 24,
@@ -256,48 +257,47 @@ const styles = StyleSheet.create({
   categoryImage: {
     width: "135%",
     height: "166%",
-    position:"absolute",
-    borderRadius:20,
-    opacity:0.7
+    position: "absolute",
+    borderRadius: 20,
+    opacity: 0.7,
   },
   categoryLabel: {
     marginTop: 10,
     marginLeft: 10,
     fontWeight: "bold",
-    color: theme.colors.buttonText,
+    color: theme.colors.text,
     fontSize: 20,
   },
-  goalHeading:{
+  goalHeading: {
     fontSize: 24,
     fontWeight: "bold",
     marginLeft: 10,
     color: "beige",
-    zIndex:3
+    zIndex: 3,
   },
-  goalDescription:{
+  goalDescription: {
     fontSize: 15,
-    color:"white",
+    color: "white",
     marginLeft: 10,
-    zIndex:3,
-    fontWeight:"600",
-    letterSpacing:1,
-    textShadowColor:"black",
-    shadowOpacity:0.8,
-    // textAlign:"justify"
+    zIndex: 3,
+    fontWeight: "600",
+    letterSpacing: 1,
+    textShadowColor: "black",
+    shadowOpacity: 0.8,
   },
-  blackBg:{
-    backgroundColor:"black",
+  blackBg: {
+    backgroundColor: "black",
     width: "135%",
     height: "166%",
-    position:"absolute",
-    borderRadius:20,
-    opacity:0.4
+    position: "absolute",
+    borderRadius: 20,
+    opacity: 0.4,
   },
-  fridgePlaceholderImg:{
+  fridgePlaceholderImg: {
     width: 140,
     height: 150,
     borderRadius: 20,
-    position:"absolute"
-  }
+    position: "absolute",
+  },
 });
-export default HomeScreen
+export default HomeScreen;
