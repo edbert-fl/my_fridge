@@ -10,6 +10,7 @@ import {
   RouteProp,
   ParamListBase,
   useNavigation,
+  useRoute,
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { AntDesign } from "@expo/vector-icons";
@@ -39,6 +40,8 @@ const AppTabNavigator = () => {
   const { currUser } = useAppContext();
 
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
+
+  const ItemsInReceiptFC = () => <ItemsInReceipt route={useRoute()}/>
 
   const navigateToScanner = () => {
     navigation.navigate("Scanner");
@@ -203,7 +206,7 @@ const AppTabNavigator = () => {
       />
       <Tab.Screen
         name="ItemScreen"
-        component={ItemsInReceipt}
+        component={ItemsInReceiptFC}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (

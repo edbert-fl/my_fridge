@@ -1,27 +1,35 @@
-import React, { useState, useEffect, useRef } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { RouteProp, useNavigation } from "@react-navigation/native";
+import { Button } from "@rneui/base";
 import type { PropsWithChildren } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
-  TextInput,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-  Text,
   Animated,
-  TouchableWithoutFeedback,
+  Image,
   Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
   ViewStyle,
 } from "react-native";
-import { commonStyles, theme } from "../utils/Styles";
-import AppHeader from "../components/AppHeader";
-import { MaterialIcons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Button } from "@rneui/base";
-import { useNavigation } from "@react-navigation/native";
+import AppHeader from "../components/AppHeader";
+import { commonStyles, theme } from "../utils/Styles";
+import { ScannerParamList } from "../utils/Types";
 
-const ItemScreen = () => {
+type ItemsScreenRouteProp = RouteProp<ScannerParamList, "ItemScreen">;
+
+interface ItemsScreenProps {
+  route: ItemsScreenRouteProp;
+}
+
+const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
+  const { itemID } = route.params;
   const initialdata = {
     name: "Apple",
     quantity: 20,
