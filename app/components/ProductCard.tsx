@@ -8,6 +8,14 @@ interface ProductCardProps {
   item: Item;
 }
 
+const formatDate = (expiryDate: any) => {
+  const date = new Date(expiryDate);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}/${month}/${day}`;
+};
+
 const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
   const leafRatingOptions = [1, 2, 3, 4, 5];
   const [leafRating, setleafRating] = useState(item.healthRating);
@@ -17,7 +25,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
-            source={require("../../assets/burger_placeholder.png")}
+            source={
+              item.art
+                ? { uri: item.art }
+                : require("../../assets/burger_placeholder.png")
+            }
             style={styles.image}
           />
         </View>
@@ -27,7 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
           </View>
           <View>
             <Text style={styles.expiryDate}>
-              Expires {item.expiryDate.toLocaleDateString()}
+              Expires {formatDate(item.expiryDate)}
             </Text>
           </View>
           <View>
