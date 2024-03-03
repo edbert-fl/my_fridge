@@ -13,7 +13,7 @@ export interface User {
 }
 
 export interface Item {
-  itemID: number,
+  itemid: number,
   receiptID: number,
   name: string,
   quantity: number,

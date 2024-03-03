@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import { View, Text, StyleSheet,Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet,Image, TouchableOpacity, ScrollView } from 'react-native'
 import { theme } from '../utils/Styles';
 import { AntDesign } from '@expo/vector-icons';
 import SpecificRecipe from './SpecificRecipe';
@@ -18,7 +18,7 @@ const DefaultRecipes: React.FC<DefaultRecipesProps> = ({currentPopularRecipe, se
         return <SpecificRecipe mealDetail={mealDetail} setSpecifyRecipe={setSpecifyRecipe} />
     }
     return (
-        <View style={styles.container} >
+        <ScrollView style={styles.container} >
             <Text style={styles.heading} >
                 {`Category - ${recipeGoal}`}
             </Text>
@@ -51,7 +51,7 @@ const DefaultRecipes: React.FC<DefaultRecipesProps> = ({currentPopularRecipe, se
             </View>
             
             
-        </View>
+        </ScrollView>
   )
 }
 const styles = StyleSheet.create({

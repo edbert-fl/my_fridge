@@ -12,7 +12,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item }) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   const leafRatingOptions = [1, 2, 3, 4, 5];
   const [leafRating, setleafRating] = useState(item.healthRating);
-  console.log(typeof item.expirydate)
+  // console.log(typeof item.expirydate)
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>

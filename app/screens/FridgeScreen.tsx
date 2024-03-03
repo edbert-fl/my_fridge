@@ -38,7 +38,7 @@ export const FridgeScreen = () => {
 
   const [products, setProducts] = useState(null);
   useEffect(()=>{
-    console.log(currUser);
+    // console.log(currUser);
     
     try {
       console.log("CURRUSER", currUser)
@@ -66,46 +66,20 @@ export const FridgeScreen = () => {
     // console.log(products);
     setSuccess(true)
   },[products])
-  if (success) {
-      // console.log(products);
+  // if (success) {
+  //     // console.log(products);
       
-      products?.map((prod) => {
-        console.log(prod.name)
-      })
+  //     products?.map((prod) => {
+  //       console.log(prod.name)
+  //     })
     
     
-  }
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const productsCollection = collection(FIRESTORE_DB, "products");
-  //       const productsSnapshot = await getDocs(productsCollection);
-  //       const fetchedProducts: Product[] = productsSnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         name: doc.data().name,
-  //         description: doc.data().description,
-  //         price: doc.data().price,
-  //         image: doc.data().image,
-  //         discountPrice: doc.data().discountPrice,
-  //       }));
-  //       setProducts(fetchedProducts);
-  //       setFilteredProducts(fetchedProducts);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
+  // }
+
 
   return (
     <View style={styles.background}>
-      <AppHeader
-        title={"Fridge Items"}
-        onBackIcon={
-          <Icon name="arrow-back" size={24} color={theme.colors.background} />
-        }
-        onBackPress={() => scannerNavigation.goBack()}
-      />
+  
       <View style={{ paddingVertical: 10 }} />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
