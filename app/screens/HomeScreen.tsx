@@ -150,12 +150,13 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                   ) )}
                   </View>
-                ))}
-              </View>
-            )}
+                )}
+              </ScrollView>
+            </View>
+          </SafeAreaView>
           </ScrollView>
-        </View>
-      </ScrollView>
+      //   </View>
+      // </ScrollView>
   );
 };
 const styles = StyleSheet.create({

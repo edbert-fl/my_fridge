@@ -80,5 +80,14 @@ export type RootStackNavigationProp = StackNavigationProp<
   | "AppTabNavigator"
 >;
 
+export type Recipe = {
+  name: string,
+  ingredients: string[],
+  instructions: string,
+  caloriesPerServing: number,
+  servings: number,
+  img: string
+}
+
 export type RootStackRouteProp<RouteName extends keyof RootStackParamList> =
   RouteProp<RootStackParamList, RouteName>;
