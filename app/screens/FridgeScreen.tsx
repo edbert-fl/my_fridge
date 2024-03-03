@@ -9,47 +9,11 @@ import { Item, ScannerParamList } from "../utils/Types";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { demoItems } from "../utils/Helpers";
 
 export const FridgeScreen = () => {
   const scannerNavigation =
-    useNavigation<StackNavigationProp<ScannerParamList>>();
-
-  // TODO: DELETE AFTER
-  const burger: Item = {
-    itemID: 1,
-    receiptID: 1,
-    name: "Hamburger",
-    quantity: 4,
-    weight: null,
-    expiryDate: new Date(),
-    price: 5.2,
-    healthRating: 3,
-    healthComment: "Burgers are not good for you. Eat in moderation.",
-  };
-
-  const noodle: Item = {
-    itemID: 2,
-    receiptID: 2,
-    name: "Noodle",
-    quantity: 2,
-    weight: null,
-    expiryDate: new Date(2024, 2, 25),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
-
-  const chicken: Item = {
-    itemID: 3,
-    receiptID: 3,
-    name: "Chicken",
-    quantity: 5,
-    weight: null,
-    expiryDate: new Date(2024, 2, 23),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
+    useNavigation<StackNavigationProp<ScannerParamList>>()
 
   const sortItems = (items: Item[]) => {
     let x;
@@ -70,8 +34,7 @@ export const FridgeScreen = () => {
     return items;
   };
 
-  const listOfItems: Item[] = [noodle, burger, chicken];
-  const [products, setProducts] = useState<Item[]>(sortItems(listOfItems));
+  const [products, setProducts] = useState<Item[]>(sortItems(demoItems));
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
@@ -109,7 +72,6 @@ export const FridgeScreen = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         style={{ backgroundColor: theme.colors.background }}
       >
-        {/* TODO: CHANGE THIS TO PRODUCTS/FILTERED PRODUCTS */}
         <ProductList items={products} />
       </ScrollView>
     </View>
