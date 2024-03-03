@@ -15,7 +15,7 @@ export const ItemScreen = () => {
   const [currProduct, setCurrProduct] = useState<Item>();
   const fetchProduct = async (itemID: Number) => {
     try {
-      const response = await axios.get(`http://${DATABASE_URL}/items/${itemID}`);
+      const response = await axios.get(`http://${DATABASE_URL}/item/${itemID}`);
       const data = response.data;
       const fetchedProduct: Item = {
         itemID: data.itemID,
