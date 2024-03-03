@@ -41,14 +41,19 @@ const Login = () => {
         email: email,
         password: password,
       });
-      const userData = response.data.user;
-      setCurrUser({
-        userID: userData.userid,
-        username: userData.username,
-        email: userData.email,
-        salt: userData.salt,
-        createdAt: new Date(userData.createdAt),
-      });
+      const userData = await response.data.user;
+      if (userData) {
+          console.log("log ",userData);
+          
+          setCurrUser({
+            userID: userData.userid,
+            username: userData.username,
+            email: userData.email,
+            salt: userData.salt,
+            createdAt: new Date(userData.createdAt),
+          });
+      }
+      
       console.log(userData);
     } catch (error) {
       alert(`Error signing in ${error}`);
