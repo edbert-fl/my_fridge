@@ -72,7 +72,6 @@ export const ReceiptHistory = () => {
         console.log(`Error fetching receipts: ${error}`);
       }
     };
-    fetchReceipts(1); // TODO: Place generic args not just 1
   }, []);
   return (
     <View style={styles.background}>
