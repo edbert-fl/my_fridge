@@ -18,43 +18,65 @@ export const ItemScreen = () => {
   const [search, setSearch] = useState("");
 
   // TODO: DELETE AFTER
-  const burger: Item = {
-    itemID: 1,
-    receiptID: 1,
-    name: "Hamburger",
-    quantity: 4,
-    weight: null,
-    expiryDate: new Date(),
-    price: 5.2,
-    healthRating: 3,
-    healthComment: "Burgers are not good for you. Eat in moderation.",
-  };
+  // const burger: Item = {
+  //   itemID: 1,
+  //   receiptID: 1,
+  //   name: "Hamburger",
+  //   quantity: 4,
+  //   weight: null,
+  //   expiryDate: new Date(),
+  //   price: 5.2,
+  //   healthRating: 3,
+  //   healthComment: "Burgers are not good for you. Eat in moderation.",
+  // };
 
-  const noodle: Item = {
-    itemID: 2,
-    receiptID: 2,
-    name: "Noodle",
-    quantity: 2,
-    weight: null,
-    expiryDate: new Date(),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
+  // const noodle: Item = {
+  //   itemID: 2,
+  //   receiptID: 2,
+  //   name: "Noodle",
+  //   quantity: 2,
+  //   weight: null,
+  //   expiryDate: new Date(),
+  //   price: 3,
+  //   healthRating: 4,
+  //   healthComment: "Noodles are good for you.",
+  // };
 
-  const chicken: Item = {
-    itemID: 3,
-    receiptID: 3,
-    name: "Chicken",
-    quantity: 5,
-    weight: null,
-    expiryDate: new Date(2024, 2, 23),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
+  // const chicken: Item = {
+  //   itemID: 3,
+  //   receiptID: 3,
+  //   name: "Chicken",
+  //   quantity: 5,
+  //   weight: null,
+  //   expiryDate: new Date(2024, 2, 23),
+  //   price: 3,
+  //   healthRating: 4,
+  //   healthComment: "Noodles are good for you.",
+  // };
 
-  const listOfItems: Item[] = [noodle, burger, chicken];
+  // const listOfItems: Item[] = [noodle, burger, chicken];
+  const fetchProduct = async (itemID: Number) => {
+    try {
+      const response = await axios.get(`http://${DATABASE_URL}/items/${itemID}`);
+      const data = response.data;
+      const fetchedProduct: Item = {
+        itemID: data.itemID,
+        receiptID: data.receiptID,
+        name: data.name,
+        quantity: data.number,
+        expiryDate: data.expiryDate,
+        weight: data.weight,
+        price: data.price,
+        healthRating: data.healthRating,
+        healthComment: data.healthComment, 
+        art: data.art,
+      };
+      console.log("Response: ", response);
+      return fetchedProduct;
+    } catch (error) {
+      console.log(`Error fetching item: ${error}`);
+    }
+  };
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
