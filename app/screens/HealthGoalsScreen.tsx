@@ -62,7 +62,7 @@ const HealthGoalsScreen = () => {
       if (response.data.user) {
         const userData = response.data.user;
         setCurrUser({
-          userID: userData.id,
+          userID: userData.userid,
           username: userData.username,
           email: userData.email,
           salt: userData.salt,

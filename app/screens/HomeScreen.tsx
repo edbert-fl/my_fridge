@@ -20,6 +20,7 @@ import { demoItems } from "../utils/Helpers";
 import { useNavigation } from "@react-navigation/native";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useAppContext } from "../context/AppContext";
 
 const Stack = createNativeStackNavigator();
 const HomeScreen = () => {
@@ -29,6 +30,7 @@ const HomeScreen = () => {
   const [recipeGoal, setRecipeGoal] = useState<string>("");
   const [rotd, setRotd] = useState<any>({});
   const [viewRotd, setViewRotd] = useState(false);
+  const {currUser} = useAppContext();
   // make new feature to scan nutrition value as well.
   useEffect(() => {
     const index = Math.floor(Math.random() * rotdList.length);
