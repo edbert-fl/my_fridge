@@ -5,6 +5,8 @@ import AppHeader from "../components/AppHeader";
 import HistoryList from "../components/HistoryList";
 import { theme } from "../utils/Styles";
 import { Receipt } from "../utils/Types";
+import { DATABASE_URL } from "../utils/Helpers";
+import axios from "axios";
 
 export const ReceiptHistory = () => {
   const ColesReceipt_1: Receipt = {
@@ -53,7 +55,24 @@ export const ReceiptHistory = () => {
   };
 
   const [products, setProducts] = useState<Receipt[]>(sortReceipt(receipts));
-
+  React.useEffect(() => {
+    const fetchReceipts = async (userID: Number) => {
+      try {
+        const response = await axios.get(`http://${DATABASE_URL}/receipts/${userID}`);
+        const fetchedReceipts: Receipt[] = response.data.map((data: any) => ({
+          userID: data.userID,
+          receiptID: data.receiptID,
+          store: data.store,
+          dateOfPurchase: data.dateOfPurchase,
+          healthRating: data.healthRating,
+        }));
+        setProducts(fetchedReceipts);
+        console.log("Response: ", response);
+      } catch (error) {
+        console.log(`Error fetching receipts: ${error}`);
+      }
+    };
+  }, []);
   return (
     <View style={styles.background}>
       <AppHeader title={"My Receipts"} />

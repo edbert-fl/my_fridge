@@ -8,32 +8,33 @@ import { theme } from "../utils/Styles";
 import { Item } from "../utils/Types";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { demoItems } from "../utils/Helpers";
+import axios from "axios";
+import { DATABASE_URL } from "../utils/Helpers";
 
 export const ItemScreen = () => {
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const productsCollection = collection(FIRESTORE_DB, "products");
-  //       const productsSnapshot = await getDocs(productsCollection);
-  //       const fetchedProducts: Product[] = productsSnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         name: doc.data().name,
-  //         description: doc.data().description,
-  //         price: doc.data().price,
-  //         image: doc.data().image,
-  //         discountPrice: doc.data().discountPrice,
-  //       }));
-
-  //       setProducts(fetchedProducts);
-  //       setFilteredProducts(fetchedProducts);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
-
-  //   fetchProducts();
-  // }, []);
+  const [currProduct, setCurrProduct] = useState<Item>();
+  const fetchProduct = async (itemID: Number) => {
+    try {
+      const response = await axios.get(`http://${DATABASE_URL}/items/${itemID}`);
+      const data = response.data;
+      const fetchedProduct: Item = {
+        itemID: data.itemID,
+        receiptID: data.receiptID,
+        name: data.name,
+        quantity: data.number,
+        expiryDate: data.expiryDate,
+        weight: data.weight,
+        price: data.price,
+        healthRating: data.healthRating,
+        healthComment: data.healthComment, 
+        art: data.art,
+      };
+      console.log("Response: ", response);
+      setCurrProduct(fetchedProduct);
+    } catch (error) {
+      console.log(`Error fetching item: ${error}`);
+    }
+  };
 
   return (
     <View style={styles.background}>
