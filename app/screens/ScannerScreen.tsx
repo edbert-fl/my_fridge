@@ -60,7 +60,8 @@ const ScannerScreen = () => {
   const { currUser, setCurrUser } = useAppContext();
 
   const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
-  const scannerNavigation = useNavigation<StackNavigationProp<ScannerParamList>>();
+  const scannerNavigation =
+    useNavigation<StackNavigationProp<ScannerParamList>>();
 
   useEffect(() => {
     requestPermissions();
@@ -191,7 +192,7 @@ const ScannerScreen = () => {
       setLoading(true);
       const picture = await takePicture();
       // const response = await sendReceiptToServer(picture as string);
-      const response = {} // Temporary
+      const response = {}; // Temporary
 
       // Make a call to create a receipt
       // const dateOfPurchase = new Date(
@@ -212,7 +213,7 @@ const ScannerScreen = () => {
           //   requestBody
           // );
           // const receiptID = createReceiptResponse.data.receipt.receiptID;
-          const receiptID =  1 // Temporary
+          const receiptID = 3; // Temporary
 
           scannerNavigation.navigate("ItemsInReceipt", {
             receiptID: receiptID,
