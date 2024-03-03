@@ -3,9 +3,16 @@ import { View, Text, StyleSheet,Image, TouchableOpacity } from 'react-native'
 import { theme } from '../utils/Styles';
 import { AntDesign } from '@expo/vector-icons';
 import SpecificRecipe from './SpecificRecipe';
-const DefaultRecipes = ({currentPopularRecipe, setPopularsPressed, recipeGoal}) => {
+import { Recipe } from '../utils/Types';
+interface DefaultRecipesProps {
+    currentPopularRecipe: Recipe[];
+    setPopularsPressed: React.Dispatch<React.SetStateAction<boolean>>;
+    recipeGoal: string;
+  }
+  
+const DefaultRecipes: React.FC<DefaultRecipesProps> = ({currentPopularRecipe, setPopularsPressed, recipeGoal}) => {
     const [specifyRecipe, setSpecifyRecipe] = useState(false)
-    const [mealDetail, setMealDetail] = useState([])
+    const [mealDetail, setMealDetail] = useState<Recipe[] | null>(null)
     
     if (specifyRecipe) {
         return <SpecificRecipe mealDetail={mealDetail} setSpecifyRecipe={setSpecifyRecipe} />

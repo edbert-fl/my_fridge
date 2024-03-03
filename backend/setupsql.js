@@ -58,12 +58,12 @@ const createTables = async () => {
                 itemID SERIAL PRIMARY KEY,
                 receiptID INT NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                quantity INT NOT NULL,
+                quantity VARCHAR(255) NOT NULL,
                 expiryDate DATE NOT NULL,
-                weight NUMERIC DEFAULT NULL,
-                price NUMERIC DEFAULT NULL,
+                weight VARCHAR(255) DEFAULT NULL,
                 healthRating INT NOT NULL CHECK (healthRating >= 1 AND healthRating <= 10),
                 healthComment TEXT NOT NULL,
+                art VARCHAR(255),
                 FOREIGN KEY (receiptID) REFERENCES Receipts(receiptID)
             )
         `);
