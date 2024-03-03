@@ -39,7 +39,6 @@ export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(SERVER_URL + "/items/" + receiptID);
         const response = await fetch(SERVER_URL + "/items/" + receiptID);
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -55,32 +54,7 @@ export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
 
     fetchData();
   }, []);
-  console.log(receiptItem);
 
-  // console.log(receiptItem);
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const productsCollection = collection(FIRESTORE_DB, "products");
-  //       const productsSnapshot = await getDocs(productsCollection);
-  //       const fetchedProducts: Product[] = productsSnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         name: doc.data().name,
-  //         description: doc.data().description,
-  //         price: doc.data().price,
-  //         image: doc.data().image,
-  //         discountPrice: doc.data().discountPrice,
-  //       }));
-  //       setProducts(fetchedProducts);
-  //       setFilteredProducts(fetchedProducts);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
-  console.log(receiptItem);
   return (
     <View style={styles.background}>
       <AppHeader

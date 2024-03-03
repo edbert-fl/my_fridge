@@ -20,8 +20,9 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AppHeader from "../components/AppHeader";
 import { commonStyles, theme } from "../utils/Styles";
-import { ScannerParamList } from "../utils/Types";
+import { Item, ScannerParamList } from "../utils/Types";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { SERVER_URL } from "../utils/Helpers";
 
 type ItemsScreenRouteProp = RouteProp<ScannerParamList, "ItemScreen">;
 
@@ -33,35 +34,49 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
   const { itemID, justAdded } = route.params;
   const scannerNavigation =
     useNavigation<StackNavigationProp<ScannerParamList>>();
-  const initialdata = {
-    name: "Apple",
-    quantity: 20,
-    expiryDate: new Date(),
-    weight: "3kg",
-    price: 13,
-    healthRating: 4,
-    healthComment:
-      "Apples are not only delicious but also incredibly nutritious. Packed with fiber, vitamins, and antioxidants, they promote good digestive health, lower the risk of chronic diseases like heart disease.",
-  };
 
+  const [data, setData] = useState<Item | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const leafRatingOptions = [1, 2, 3, 4, 5];
   const [popupVisible, setPopupVisible] = useState(false);
   const [textInputValue, setTextInputValue] = useState("");
   const [selectedField, setSelectedField] = useState("");
-  const [data, setData] = useState(initialdata);
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(Platform.OS === "ios");
-  const [leafRating, setleafRating] = useState(data.healthRating);
+  const [leafRating, setleafRating] = useState(0);
   const animatedButtonScale = new Animated.Value(1);
 
-  //DatePicker
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(SERVER_URL + "/item/" + itemID);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const fetchedData = await response.json();
+        setData(fetchedData[0]);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [itemID]);
+
+  useEffect(() => {
+    if (data) {
+      setleafRating(data.healthRating);
+    }
+  }, [data]);
+
   const onChange = (event: any, selectedDate: Date | undefined) => {
     const currentDate = selectedDate || date;
     setShowPicker(Platform.OS === "ios");
     setDate(currentDate);
   };
 
-  // Edit Popup
   type FadeInViewProps = PropsWithChildren<{ style: ViewStyle }>;
 
   const FadeInView: React.FC<FadeInViewProps> = (props) => {
@@ -93,8 +108,6 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
     setSelectedField(field);
   };
 
-  // leafs
-
   const handlePressIn = (option: number) => {
     Animated.spring(animatedButtonScale, {
       toValue: 1.5,
@@ -119,34 +132,42 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
 
   const navigation = useNavigation();
 
-  // Editing Changes
   const saveChanges = (newValue: string) => {
-    const updatedData = { ...data };
-    switch (selectedField) {
-      case "name":
-        updatedData.name = newValue;
-        break;
-      case "quantity":
-        updatedData.quantity = parseInt(newValue);
-        break;
-      case "expiryDate":
-        updatedData.expiryDate = new Date(newValue);
-        break;
-      case "weight":
-        updatedData.weight = newValue;
-        break;
-      case "price":
-        updatedData.price = parseFloat(newValue);
-        break;
-      case "healthComment":
-        updatedData.healthComment = newValue;
-        break;
-      default:
-        break;
+    if (data !== null && data !== undefined) {
+      const updatedData = { ...data };
+      switch (selectedField) {
+        case "name":
+          updatedData.name = newValue;
+          break;
+        case "quantity":
+          updatedData.quantity = parseInt(newValue);
+          break;
+        case "expiryDate":
+          updatedData.expiryDate = new Date(newValue);
+          break;
+        case "weight":
+          if (!isNaN(parseFloat(newValue))) {
+            updatedData.weight = parseFloat(newValue);
+          }
+          break;
+        case "price":
+          if (!isNaN(parseFloat(newValue))) {
+            updatedData.price = parseFloat(newValue);
+          }
+          break;
+        case "healthComment":
+          updatedData.healthComment = newValue;
+          break;
+        default:
+          break;
+      }
+      setData(updatedData);
+      setPopupVisible(false);
     }
-    setData(updatedData);
-    setPopupVisible(false);
   };
+
+  const burger_placeholder = require("../../assets/burger_placeholder.png");
+
   return (
     <View style={styles.container}>
       <AppHeader
@@ -157,124 +178,152 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
         onBackPress={() => scannerNavigation.goBack()}
       />
       <SafeAreaView style={commonStyles.safeAreaView}>
-        {/*Image*/}
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: "https://domf5oio6qrcr.cloudfront.net/medialibrary/11525/0a5ae820-7051-4495-bcca-61bf02897472.jpg",
-            }}
-            style={styles.image}
-          />
-        </View>
-        {/*Title*/}
-        <View style={styles.editContainer}>
-          <TextInput style={styles.h1} value={data.name} editable={false} />
-          <TouchableOpacity onPress={() => openPopup(data.name, "name")}>
-            <Icon name="edit" size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-        </View>
-        {/*HealthRating*/}
-        <View style={styles.ratingContainer}>
-          <View style={styles.leafs}>
-            {leafRatingOptions.map((option) => (
-              <TouchableWithoutFeedback
-                onPressIn={() => handlePressIn(option)}
-                onPressOut={() => handlePressOut(option)}
-                key={option}
+        {!loading && (
+          <>
+            {/* Image */}
+            <View style={styles.imageContainer}>
+              <Image
+                source={data?.art ? { uri: data.art } : burger_placeholder}
+                style={styles.image}
+              />
+            </View>
+            {/* Title */}
+            <View style={styles.editContainer}>
+              <TextInput
+                style={styles.h1}
+                value={data?.name ?? ""}
+                editable={false}
+              />
+              <TouchableOpacity
+                onPress={() => openPopup(data?.name ?? "", "name")}
               >
-                <Animated.View style={animatedScaleStyle}>
-                  <MaterialIcons
-                    name={leafRating >= option ? "eco" : "eco"}
-                    size={25}
-                    style={
-                      leafRating >= option
-                        ? styles.leafSelected
-                        : styles.leafUnselected
-                    }
+                <Icon name="edit" size={20} color={theme.colors.primary} />
+              </TouchableOpacity>
+            </View>
+            {/* HealthRating */}
+            <View style={styles.ratingContainer}>
+              <View style={styles.leafs}>
+                {leafRatingOptions.map((option) => (
+                  <TouchableWithoutFeedback
+                    onPressIn={() => handlePressIn(option)}
+                    onPressOut={() => handlePressOut(option)}
+                    key={option}
+                  >
+                    <Animated.View style={animatedScaleStyle}>
+                      <MaterialIcons
+                        name={leafRating >= option ? "eco" : "eco"}
+                        size={25}
+                        style={
+                          leafRating >= option
+                            ? styles.leafSelected
+                            : styles.leafUnselected
+                        }
+                      />
+                    </Animated.View>
+                  </TouchableWithoutFeedback>
+                ))}
+              </View>
+            </View>
+            {/* Quantity */}
+            <View style={styles.editContainer}>
+              <Text style={styles.h2}>Quantity</Text>
+              <TextInput
+                style={styles.p}
+                value={(data?.quantity ?? "").toString()}
+                editable={false}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  openPopup((data?.quantity ?? "").toString(), "quantity")
+                }
+              >
+                <Icon name="edit" size={20} color={theme.colors.primary} />
+              </TouchableOpacity>
+            </View>
+            {/* ExpiryDate */}
+            <View style={styles.editContainer}>
+              <Text style={styles.h2}>Expiry Date </Text>
+
+              {showPicker && (
+                <DateTimePicker
+                  value={date}
+                  mode="date"
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChange}
+                  style={styles.DateTimePicker}
+                />
+              )}
+            </View>
+            {/* Weight */}
+            <View style={styles.editContainer}>
+              <Text style={styles.h2}>Weight</Text>
+              <TextInput
+                style={styles.p}
+                value={
+                  data?.weight !== null && data?.weight !== undefined
+                    ? data.weight.toString()
+                    : ""
+                }
+                editable={false}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  openPopup(
+                    data?.weight !== null && data?.weight !== undefined
+                      ? data.weight.toString()
+                      : "",
+                    "weight"
+                  )
+                }
+              >
+                <Icon name="edit" size={20} color={theme.colors.primary} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.healthComment}>
+              {data?.healthComment ?? ""}
+            </Text>
+            <View style={styles.buttonContainer}>
+              {justAdded ? (
+                <Button
+                  title="Save"
+                  titleStyle={{ fontWeight: "bold", fontSize: 20 }}
+                  buttonStyle={{
+                    backgroundColor: theme.colors.primary,
+                    height: 50,
+                    width: 130,
+                    borderRadius: 10,
+                  }}
+                />
+              ) : (
+                <>
+                  <Button
+                    title={"Eat"}
+                    titleStyle={{ fontWeight: "bold", fontSize: 20 }}
+                    color="red"
+                    buttonStyle={{
+                      backgroundColor: theme.colors.primary,
+                      height: 50,
+                      width: 130,
+                      borderRadius: 10,
+                    }}
                   />
-                </Animated.View>
-              </TouchableWithoutFeedback>
-            ))}
-          </View>
-        </View>
-        {/*Quantity*/}
-        <View style={styles.editContainer}>
-          <Text style={styles.h2}>Quantity</Text>
-          <TextInput
-            style={styles.p}
-            value={data.quantity.toString()}
-            editable={false}
-          />
-          <TouchableOpacity
-            onPress={() => openPopup(data.quantity.toString(), "quantity")}
-          >
-            <Icon name="edit" size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-        </View>
-        {/*ExpiryDate*/}
-        <View style={styles.editContainer}>
-          <Text style={styles.h2}>Expiry Date </Text>
-
-          {showPicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              is24Hour={true}
-              display="default"
-              onChange={onChange}
-              style={styles.DateTimePicker}
-            />
-          )}
-        </View>
-        {/*Weight*/}
-        <View style={styles.editContainer}>
-          <Text style={styles.h2}>Weight</Text>
-          <TextInput style={styles.p} value={data.weight} editable={false} />
-          <TouchableOpacity onPress={() => openPopup(data.weight, "weight")}>
-            <Icon name="edit" size={20} color={theme.colors.primary} />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.healthComment}>{data.healthComment}</Text>
-        <View style={styles.buttonContainer}>
-          {justAdded ? (
-            <Button
-              title="Save"
-              titleStyle={{ fontWeight: "bold", fontSize: 20 }}
-              buttonStyle={{
-                backgroundColor: theme.colors.primary,
-                height: 50,
-                width: 130,
-                borderRadius: 10,
-              }}
-            />
-          ) : (
-            <>
-              <Button
-                title={"Eat"}
-                titleStyle={{ fontWeight: "bold", fontSize: 20 }}
-                color="red"
-                buttonStyle={{
-                  backgroundColor: theme.colors.primary,
-                  height: 50,
-                  width: 130,
-                  borderRadius: 10,
-                }}
-              />
-              <Button
-                title={"Trash"}
-                titleStyle={{ fontWeight: "bold", fontSize: 20 }}
-                color="red"
-                buttonStyle={{
-                  backgroundColor: theme.colors.accent,
-                  height: 50,
-                  width: 130,
-                  borderRadius: 10,
-                }}
-              />
-            </>
-          )}
-        </View>
-
+                  <Button
+                    title={"Trash"}
+                    titleStyle={{ fontWeight: "bold", fontSize: 20 }}
+                    color="red"
+                    buttonStyle={{
+                      backgroundColor: theme.colors.accent,
+                      height: 50,
+                      width: 130,
+                      borderRadius: 10,
+                    }}
+                  />
+                </>
+              )}
+            </View>
+          </>
+        )}
         {popupVisible && (
           <FadeInView style={styles.popupContainer}>
             <View style={styles.popupContent}>
@@ -320,7 +369,8 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "80%",
-    height: "80%",
+    height: "90%",
+    overflow: "visible",
   },
   h1: {
     flex: 1,

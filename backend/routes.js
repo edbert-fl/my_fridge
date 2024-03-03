@@ -359,6 +359,24 @@ module.exports.initializeRoutes = (app) => {
     }
   });
 
+  // Route to get item in based on itemID
+  app.get("/item/:itemID", async function (req, res) {
+    const { itemID } = req.params;
+    console.log("check");
+
+    try {
+      const query = `SELECT * FROM Items WHERE itemID = $1`;
+      const { rows } = await pool.query(query, [itemID]);
+
+      res.json(rows);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
   // Route to get all items for a particular user that have not yet expired
   app.get("/user/:userID/items/notexpired", async function (req, res) {
     const { userID } = req.params;
