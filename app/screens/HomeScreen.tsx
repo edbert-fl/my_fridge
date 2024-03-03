@@ -1,162 +1,201 @@
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView } from 'react-native'
-import React,{useState, useEffect} from 'react'
-import { rotdList } from '../utils/defaultGoals';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import { rotdList } from "../utils/defaultGoals";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { data } from "../utils/defaultGoals";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { theme } from "../utils/Styles";
+import { Item, ScannerParamList, TabParamList } from "../utils/Types";
+import DefaultRecipes from "./DefaultRecipes";
+import SpecificRecipe from "./SpecificRecipe";
+import { demoItems } from "../utils/Helpers";
 import { useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { data } from '../utils/defaultGoals';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
-import { theme } from '../utils/Styles';
-import { Item, Promo } from '../utils/Types';
-import { BackgroundImage } from 'react-native-elements/dist/config';
-import FamousRecipeModal from '../components/famousRecipeModal';
-import DefaultRecipes from './DefaultRecipes';
-import SpecificRecipe from './SpecificRecipe';
+
 const Stack = createNativeStackNavigator();
 const HomeScreen = () => {
   const [fridgeItems, setFridgeItems] = useState<Item[]>([]);
   const [popularRecipesPressed, setPopularsPressed] = useState<boolean>(false);
-  const [currentPopularRecipe, setCurrentPopularRecipe] = useState([]);
+  const [currentPopularRecipe, setCurrentPopularRecipe] = useState<any>({});
   const [recipeGoal, setRecipeGoal] = useState<string>("");
-  const [rotd, setRotd] = useState([])
-  const [viewRotd, setViewRotd] = useState(false)
+  const [rotd, setRotd] = useState<any>({});
+  const [viewRotd, setViewRotd] = useState(false);
   // make new feature to scan nutrition value as well.
-  useEffect(()=>{
-    const index = Math.floor(Math.random()* rotdList.length);
-    setRotd(rotdList[index])
+  useEffect(() => {
+    const index = Math.floor(Math.random() * rotdList.length);
+    setRotd(rotdList[index]);
     console.log(rotdList[index]);
-    
-  },[])
-  const currImg = (goal:string) => (
-    goal === "Lose Weight" ?
-     <Image source={require("../../assets/loseweight_bg.jpg")} style={styles.categoryImage} /> 
-     : goal === "Gain Muscle/Bulking" 
-     ? <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} /> 
-     : <Image source={require("../../assets/diseaseprevention_bg.jpg")} style={styles.categoryImage} />
-  )
-    if (popularRecipesPressed) {
-        return (
-        <DefaultRecipes currentPopularRecipe={currentPopularRecipe} setPopularsPressed={setPopularsPressed} recipeGoal={recipeGoal} />
-       )
-    }
-    if (viewRotd) {
-      return (
-        <SpecificRecipe mealDetail={rotd} setSpecifyRecipe={setViewRotd} />
-      )
-    }
+  }, []);
+
+  const navigation = useNavigation<StackNavigationProp<ScannerParamList>>();
+
+  const handleItemCardPress = (itemID: number) => {
+    navigation.navigate("ItemScreen", {itemID: itemID, justAdded: false});
+  }
+
+  const handleGoToAllItems = (itemID: number) => {
+    navigation.navigate("ItemsInReceipt", {receiptID: undefined});
+  }
+
+  const currImg = (goal: string) =>
+    goal === "Lose Weight" ? (
+      <Image
+        source={require("../../assets/loseweight_bg.jpg")}
+        style={styles.itemImage}
+      />
+    ) : goal === "Gain Muscle/Bulking" ? (
+      <Image
+        source={require("../../assets/bulking_bg.jpg")}
+        style={styles.itemImage}
+      />
+    ) : (
+      <Image
+        source={require("../../assets/diseaseprevention_bg.jpg")}
+        style={styles.itemImage}
+      />
+    );
+  if (popularRecipesPressed) {
+    return (
+      <DefaultRecipes
+        currentPopularRecipe={currentPopularRecipe}
+        setPopularsPressed={setPopularsPressed}
+        recipeGoal={recipeGoal}
+      />
+    );
+  }
+  if (viewRotd) {
+    return <SpecificRecipe mealDetail={rotd} setSpecifyRecipe={setViewRotd} />;
+  }
   return (
-    <ScrollView style={{marginTop:40}}>
-    <SafeAreaView style={styles.background}>
-        
-          <TouchableOpacity style={[styles.promotionalArtContainer, {width:330, marginRight:5}]} onPress={()=>setViewRotd(true)} >
-          <View style={styles.blackBg} />
-          <Image source={require("../../assets/rotd_placeholder.jpg")} style={[styles.categoryImage, {opacity:0.9}]} />
-            <Text style={[styles.goalHeading,{color:"beige", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
-              RECIPE OF
-            </Text>
-            <Text style={[styles.goalHeading,{color:"white", fontSize:40, padding:3, alignSelf:"center", justifyContent:"center", zIndex:3}]}>
-              THE DAY
-            </Text>
-          </TouchableOpacity>
-        <Text style={styles.heading}>Your Fridge</Text>
-        <View style={styles.categories}>
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {fridgeItems.length === 0 ? (
-              <View style={{ flexDirection: "row" }}>
-                <View style={styles.categoryPlaceholder}>
-                  <Image
-                    source={require("../../assets/placeholder1.jpg")}
-                    style={styles.fridgePlaceholderImg}
-                  />
+    <ScrollView style={{ marginTop: 40 }}>
+      <TouchableOpacity
+        style={[styles.promotionalArtContainer, { width: 330, marginRight: 5 }]}
+        onPress={() => setViewRotd(true)}
+      >
+        <View style={styles.secondaryOpacity} />
+        <Image
+          source={require("../../assets/rotd_placeholder.jpg")}
+          style={[styles.itemImage, { opacity: 0.3 }]}
+        />
+        <Text
+          style={[
+            styles.goalHeading,
+            {
+              color: "beige",
+              fontSize: 40,
+              padding: 3,
+              alignSelf: "center",
+              justifyContent: "center",
+              zIndex: 3,
+            },
+          ]}
+        >
+          RECIPE OF
+        </Text>
+        <Text
+          style={[
+            styles.goalHeading,
+            {
+              color: "white",
+              fontSize: 40,
+              padding: 3,
+              alignSelf: "center",
+              justifyContent: "center",
+              zIndex: 3,
+            },
+          ]}
+        >
+          THE DAY
+        </Text>
+      </TouchableOpacity>
+      <Text style={styles.heading}>Your Fridge</Text>
+      <View style={styles.categories}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <View style={{ flexDirection: "row" }}>
+            {demoItems.map((item: Item) => (
+              <TouchableOpacity
+                key={item.itemID}
+                onPress={() => handleItemCardPress(item.itemID)}
+              >
+                <View style={styles.fridgeItemContainer}>
+                  <Text style={styles.itemLabel}>{item.name}</Text>
+                  <Image src={item.art} style={styles.fridgeImage} />
                 </View>
-                <View style={styles.categoryPlaceholder}>
-                  <Image
-                    source={require("../../assets/placeholder2.jpg")}
-                    style={styles.fridgePlaceholderImg}
-                  />
-                </View>
-                <View style={styles.categoryPlaceholder}>
-                  <Image
-                    source={require("../../assets/placeholder3.jpg")}
-                    style={styles.fridgePlaceholderImg}
-                  />
-                </View>
-                <View style={styles.categoryPlaceholder}>
-                  <Image
-                    source={require("../../assets/placeholder4.jpg")}
-                    style={styles.fridgePlaceholderImg}
-                  />
-                </View>
-              </View>
-            ) : (
-              fridgeItems.map((item) => {
-                return (
-                  <TouchableOpacity key={item.itemID}>
-                    <View key={item.itemID} style={styles.category}>
-                      <Text style={styles.categoryLabel}>{item.name}</Text>
-                      <Image style={styles.categoryImage} />
-                    </View>
-                  </TouchableOpacity>
-                );
-              })
-            )}
-            <View style={styles.categoryScrollEnd}>
-              <TouchableOpacity>
-                <View style={styles.categoryScrollEndCircle}>
-                  <Icon
-                    style={{ alignSelf: "center" }}
-                    name="arrow-forward"
-                    size={50}
-                    color="#FFFFFF"
-                  />
-                </View>
-                <Text style={styles.categoryScrollEndText}>All Items</Text>
               </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={styles.itemScrollEnd}>
+            <TouchableOpacity>
+              <View style={styles.itemScrollEndCircle}>
+                <Icon
+                  style={{ alignSelf: "center" }}
+                  name="arrow-forward"
+                  size={50}
+                  color="#FFFFFF"
+                />
+              </View>
+              <Text style={styles.itemScrollEndText}>All Items</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+      <Text style={[styles.heading, { bottom: 40 }]}>
+        Popular recipes right now
+      </Text>
+      <View style={{ display: "flex", bottom: 100, height: 300 }}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {data.length === 0 ? (
+            <View style={styles.promosContainer}>
+              <View style={styles.promotionalArtContainer}>
+                <Image
+                  source={require("../../assets/bulking_bg.jpg")}
+                  style={styles.itemImage}
+                />
+                <Text style={styles.heading}>Promotion now</Text>
+              </View>
+              <View style={styles.promotionalArtContainer}>
+                <Text style={styles.heading}>Promotion now</Text>
+              </View>
+              <View style={styles.promotionalArtContainer}>
+                <Text style={styles.heading}>Promotion now</Text>
+              </View>
             </View>
-          </ScrollView>
-        </View>
-        <Text style={[styles.heading,{bottom:40}]}>Popular recipes right now</Text>
-        <View style={{display:"flex", bottom:100,height:300}} >
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
-                {data.length === 0 ? (
-                  <View style={styles.promosContainer} >
-                    <View style={styles.promotionalArtContainer} >
-                      <Image source={require("../../assets/bulking_bg.jpg")} style={styles.categoryImage} />
-                      <Text style={styles.heading} >Promotion now</Text>
-                    </View>
-                    <View style={styles.promotionalArtContainer} >
-                      <Text style={styles.heading} >Promotion now</Text>
-                    </View>
-                    <View style={styles.promotionalArtContainer} >
-                      <Text style={styles.heading} >Promotion now</Text>
-                    </View>
-                  </View>
-                ):(
-                  <View style={styles.promosContainer}>
-                  {data.map((curr_data, i)=> (
-                    <TouchableOpacity style={styles.promotionalArtContainer} key={i} 
-                      onPress={()=> {
-                          setPopularsPressed(true);
-                          setCurrentPopularRecipe(curr_data.recipes)
-                          setRecipeGoal(curr_data.goal)
-                          console.log(popularRecipesPressed)
-                      }}
-                    >
-                        <View style={styles.blackBg} />
-                        {currImg(curr_data.goal)}
-                        <Text style={styles.goalHeading} >{curr_data.goal}</Text>
-                        <Text style={styles.goalDescription} >{curr_data.desc}</Text>
-                    </TouchableOpacity>
-                  ) )}
-                  </View>
-                )}
-              </ScrollView>
+          ) : (
+            <View style={styles.promosContainer}>
+              {data.map((curr_data, i) => (
+                <TouchableOpacity
+                  style={styles.promotionalArtContainer}
+                  key={i}
+                  onPress={() => {
+                    setPopularsPressed(true);
+                    setCurrentPopularRecipe(curr_data.recipes);
+                    setRecipeGoal(curr_data.goal);
+                    console.log(popularRecipesPressed);
+                  }}
+                >
+                  <View style={styles.secondaryOpacity} />
+                  {currImg(curr_data.goal)}
+                  <Text style={styles.goalHeading}>{curr_data.goal}</Text>
+                  <Text style={styles.goalDescription}>{curr_data.desc}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          </SafeAreaView>
-          </ScrollView>
-      //   </View>
-      // </ScrollView>
+          )}
+        </ScrollView>
+      </View>
+    </ScrollView>
+    //   </View>
+    // </ScrollView>
   );
 };
 const styles = StyleSheet.create({
@@ -208,28 +247,40 @@ const styles = StyleSheet.create({
   categories: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 20,
+    marginTop: 30,
     overflow: "visible",
+    marginBottom: 0,
     height: 220,
   },
-  category: {
+  item: {
     width: 140,
     height: 150,
     borderRadius: 20,
     marginLeft: 25,
     backgroundColor: theme.colors.accent,
-    top: 0,
     overflow: "visible",
   },
-  categoryPlaceholder: {
+  fridgeItemContainer: {
     width: 140,
-    height: 150,
+    height: 120,
     borderRadius: 20,
     marginLeft: 25,
-    backgroundColor: theme.colors.imagePlaceholder,
-    top: 0,
+    backgroundColor: theme.colors.primary,
+    overflow: "visible",
   },
-  categoryScrollEnd: {
+  fridgeImage: {
+    marginTop: 10,
+    width: 140,
+    height: 120,
+  },
+  itemLabel: {
+    marginTop: 15,
+    marginLeft: 15,
+    fontWeight: "500",
+    color: theme.colors.background,
+    fontSize: 20,
+  },
+  itemScrollEnd: {
     width: 140,
     height: 150,
     borderRadius: 20,
@@ -239,7 +290,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
   },
-  categoryScrollEndCircle: {
+  itemScrollEndCircle: {
     width: 80,
     height: 80,
     borderRadius: 80,
@@ -250,24 +301,17 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 15,
   },
-  categoryScrollEndText: {
+  itemScrollEndText: {
     fontWeight: "600",
     textAlign: "center",
     fontSize: 18,
   },
-  categoryImage: {
+  itemImage: {
     width: "135%",
     height: "166%",
     position: "absolute",
     borderRadius: 20,
     opacity: 0.7,
-  },
-  categoryLabel: {
-    marginTop: 10,
-    marginLeft: 10,
-    fontWeight: "bold",
-    color: theme.colors.text,
-    fontSize: 20,
   },
   goalHeading: {
     fontSize: 24,
@@ -286,19 +330,13 @@ const styles = StyleSheet.create({
     textShadowColor: "black",
     shadowOpacity: 0.8,
   },
-  blackBg: {
-    backgroundColor: "black",
+  secondaryOpacity: {
+    backgroundColor: theme.colors.primary,
     width: "135%",
     height: "166%",
     position: "absolute",
     borderRadius: 20,
-    opacity: 0.4,
-  },
-  fridgePlaceholderImg: {
-    width: 140,
-    height: 150,
-    borderRadius: 20,
-    position: "absolute",
+    opacity: 1,
   },
 });
 export default HomeScreen;

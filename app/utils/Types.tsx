@@ -21,7 +21,8 @@ export interface Item {
   weight: number | null,      // for produce only
   price: number | null,       // price may not be detected
   healthRating: number,       // value from 1 - 10
-  healthComment: string
+  healthComment: string,
+  art: string,
 }
 
 export interface Receipt {
