@@ -11,6 +11,21 @@ const { OpenAI } = require("openai");
 
 const OPEN_AI_API_KEY = "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";
 
+function convertToItem(data) {
+  return {
+    itemID: data.itemid,
+    receiptID: data.receiptid,
+    name: data.name,
+    quantity: parseInt(data.quantity),
+    expiryDate: new Date(data.expirydate),
+    weight: parseFloat(data.weight),
+    price: null,
+    healthRating: data.healthrating,
+    healthComment: data.healthcomment,
+    art: data.art,
+  };
+}
+
 module.exports.initializeRoutes = (app) => {
   app.get("/api", function (req, res, next) {
     res.json({ msg: "This is CORS-enabled for all origins!" });
@@ -28,7 +43,7 @@ module.exports.initializeRoutes = (app) => {
       );
 
       const userResultData = userResult.rows[0];
-      
+
       if (userResult.rows.length === 1) {
         const storedHashedPassword = userResultData.hashedpassword;
         const salt = userResultData.salt;
@@ -59,7 +74,8 @@ module.exports.initializeRoutes = (app) => {
   });
 
   app.post("/user/register", async function (req, res) {
-    const { username, email, password, healthGoals, healthConditions } = req.body;
+    const { username, email, password, healthGoals, healthConditions } =
+      req.body;
     let client;
 
     try {
@@ -68,7 +84,14 @@ module.exports.initializeRoutes = (app) => {
       const hashedPassword = await bcrypt.hash(password, generatedSalt);
       const result = await client.query(
         "INSERT INTO USERS (username, email, hashedPassword, salt, healthGoals, healthConditions) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-        [username, email, hashedPassword, generatedSalt, healthGoals, healthConditions]
+        [
+          username,
+          email,
+          hashedPassword,
+          generatedSalt,
+          healthGoals,
+          healthConditions,
+        ]
       );
       console.log("Resulting Data:", result.rows[0]);
       res.json({
@@ -324,7 +347,28 @@ module.exports.initializeRoutes = (app) => {
     try {
       const query = `SELECT * FROM Items WHERE receiptID = $1`;
       const { rows } = await pool.query(query, [receiptID]);
-      res.json({ items: rows });
+
+      const items = rows.map((row) => convertToItem(row));
+
+      res.json({ items });
+    } catch (error) {
+      console.error("Error fetching items:", error);
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: error.message });
+    }
+  });
+
+  // Route to get item in based on itemID
+  app.get("/item/:itemID", async function (req, res) {
+    const { itemID } = req.params;
+    console.log("check");
+
+    try {
+      const query = `SELECT * FROM Items WHERE itemID = $1`;
+      const { rows } = await pool.query(query, [itemID]);
+
+      res.json(rows);
     } catch (error) {
       console.error("Error fetching items:", error);
       res
@@ -356,7 +400,7 @@ module.exports.initializeRoutes = (app) => {
   app.post("/receipts", async function (req, res) {
     const { userID, store, dateOfPurchase, healthRating } = req.body;
 
-    console.log(userID, store, dateOfPurchase, healthRating)
+    console.log(userID, store, dateOfPurchase, healthRating);
 
     try {
       const query = `INSERT INTO Receipts (userID, store, dateOfPurchase, healthRating)

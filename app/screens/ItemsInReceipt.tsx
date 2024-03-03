@@ -1,7 +1,13 @@
 import { RouteProp } from "@react-navigation/core";
 import * as React from "react";
-import { useState } from "react";
-import { ScrollView, StyleSheet, View, Text } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import AppHeader from "../components/AppHeader";
 import ProductList from "../components/ProductList";
 import { theme } from "../utils/Styles";
@@ -9,7 +15,11 @@ import { Item, ScannerParamList } from "../utils/Types";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { demoItems } from "../utils/Helpers";
+import { SERVER_URL, demoItems } from "../utils/Helpers";
+
+interface ItemsInReceiptProps {
+  route: ItemsInReceiptRouteProp;
+}
 
 type ItemsInReceiptRouteProp = RouteProp<ScannerParamList, "ItemsInReceipt">;
 
@@ -19,51 +29,31 @@ interface ItemsInReceiptProps {
 
 export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
   const { receiptID } = route.params;
+
   const scannerNavigation =
     useNavigation<StackNavigationProp<ScannerParamList>>();
 
-  const sortItems = (items: Item[]) => {
-    let x;
-    let swap = true;
-    while (swap == true) {
-      for (let i = 0; i < items.length - 1; i++) {
-        if (items[i].expiryDate > items[i + 1].expiryDate) {
-          x = items[i];
-          items[i] = items[i + 1];
-          items[i + 1] = x;
-          swap = true;
-          break;
-        } else {
-          swap = false;
+  const [receiptItem, setReceiptItem] = useState<Item | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(SERVER_URL + "/items/" + receiptID);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
         }
+        const data = await response.json();
+        setReceiptItem(data.items);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        setLoading(false);
       }
-    }
-    return items;
-  };
+    };
 
-  const [products, setProducts] = useState<Item[]>(sortItems(demoItems));
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const productsCollection = collection(FIRESTORE_DB, "products");
-  //       const productsSnapshot = await getDocs(productsCollection);
-  //       const fetchedProducts: Product[] = productsSnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         name: doc.data().name,
-  //         description: doc.data().description,
-  //         price: doc.data().price,
-  //         image: doc.data().image,
-  //         discountPrice: doc.data().discountPrice,
-  //       }));
-  //       setProducts(fetchedProducts);
-  //       setFilteredProducts(fetchedProducts);
-  //     } catch (error) {
-  //       console.error("Error fetching products:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, []);
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.background}>
@@ -80,7 +70,7 @@ export const ItemsInReceipt: React.FC<ItemsInReceiptProps> = ({ route }) => {
         style={{ backgroundColor: theme.colors.background }}
       >
         {/* TODO: CHANGE THIS TO PRODUCTS/FILTERED PRODUCTS */}
-        <ProductList items={products} />
+        {receiptItem !== null && <ProductList items={receiptItem} />}
       </ScrollView>
     </View>
   );
