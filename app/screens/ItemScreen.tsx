@@ -21,16 +21,19 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import AppHeader from "../components/AppHeader";
 import { commonStyles, theme } from "../utils/Styles";
 import { ScannerParamList } from "../utils/Types";
+import { Item } from "../utils/Types";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 type ItemsScreenRouteProp = RouteProp<ScannerParamList, "ItemScreen">;
 
 interface ItemsScreenProps {
-  route: ItemsScreenRouteProp;
+  item: Item;
+  setItemPressed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
-  const { itemID, justAdded } = route.params;
+const ItemScreen: React.FC<ItemsScreenProps> = ({ item, setItemPressed }) => {
+  console.log("item screen") 
+  // const { itemID, justAdded } = route.params;
   const scannerNavigation =
     useNavigation<StackNavigationProp<ScannerParamList>>();
   const initialdata = {
@@ -149,15 +152,10 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
   };
   return (
     <View style={styles.container}>
-      <AppHeader
-        title={"Items"}
-        onBackIcon={
-          <Icon name="arrow-back" size={24} color={theme.colors.background} />
-        }
-        onBackPress={() => scannerNavigation.goBack()}
-      />
+     
       <SafeAreaView style={commonStyles.safeAreaView}>
         {/*Image*/}
+        <Icon name="arrow-back" size={40} color={"green"} style={{marginLeft:10}} onPress={() => setItemPressed(false)} />
         <View style={styles.imageContainer}>
           <Image
             source={{
@@ -168,7 +166,7 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
         </View>
         {/*Title*/}
         <View style={styles.editContainer}>
-          <TextInput style={styles.h1} value={data.name} editable={false} />
+          <TextInput style={styles.h1} value={item.name} editable={false} />
           <TouchableOpacity onPress={() => openPopup(data.name, "name")}>
             <Icon name="edit" size={20} color={theme.colors.primary} />
           </TouchableOpacity>
@@ -236,7 +234,7 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
         </View>
         <Text style={styles.healthComment}>{data.healthComment}</Text>
         <View style={styles.buttonContainer}>
-          {justAdded ? (
+          {item ? (
             <Button
               title="Save"
               titleStyle={{ fontWeight: "bold", fontSize: 20 }}
@@ -246,6 +244,7 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
                 width: 130,
                 borderRadius: 10,
               }}
+              onPress={() => setItemPressed(false)}
             />
           ) : (
             <>
@@ -300,7 +299,8 @@ const ItemScreen: React.FC<ItemsScreenProps> = ({ route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
+    // bottom:
   },
   header: {
     fontWeight: "bold",
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    height: "30%",
+    height: "40%",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "80%",
-    height: "80%",
+    height: "100%",
   },
   h1: {
     flex: 1,

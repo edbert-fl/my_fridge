@@ -28,7 +28,7 @@ module.exports.initializeRoutes = (app) => {
       );
 
       const userResultData = userResult.rows[0];
-      
+      console.log(userResultData);
       if (userResult.rows.length === 1) {
         const storedHashedPassword = userResultData.hashedpassword;
         const salt = userResultData.salt;
@@ -195,7 +195,7 @@ module.exports.initializeRoutes = (app) => {
     }
   });
 
-  app.post("generate/recipe", async function (req, res, next) {
+  app.post("/generate/recipe", async function (req, res, next) {
     const { receiptData, healthGoals, healthConditions } = req.body;
     const openai = new OpenAI({
       apiKey: OPEN_AI_API_KEY,
@@ -343,6 +343,7 @@ module.exports.initializeRoutes = (app) => {
                        JOIN Receipts r ON i.receiptID = r.receiptID
                        WHERE r.userID = $1 AND i.expiryDate > CURRENT_DATE`;
       const { rows } = await pool.query(query, [userID]);
+      // console.log(user)
       res.json({ items: rows });
     } catch (error) {
       console.error("Error fetching items:", error);

@@ -65,6 +65,7 @@ export const styles = StyleSheet.create({
       justifyContent: 'center',
       width: '100%',
       flex: 3,
+      position:"absolute"
     },
     backButton: {
       paddingLeft: 10,

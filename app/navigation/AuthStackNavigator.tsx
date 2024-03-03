@@ -43,6 +43,7 @@ const AuthStackNavigator = () => {
             component={HealthGoalsScreen}
             options={{ headerShown: false }}
           />
+          
         </>
       )}
     </Stack.Navigator>

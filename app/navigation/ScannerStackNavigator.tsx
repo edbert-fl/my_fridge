@@ -7,7 +7,7 @@ import HealthGoalsScreen from "../screens/HealthGoalsScreen";
 import ItemScreen from "../screens/ItemScreen";
 import ItemsInReceipt from "../screens/ItemsInReceipt";
 import ScannerScreen from "../screens/ScannerScreen";
-
+import FridgeScreen from "../screens/FridgeScreen";
 const Stack = createNativeStackNavigator();
 
 const ItemsInReceiptFC = () => <ItemsInReceipt route={useRoute()} />;
@@ -28,6 +28,11 @@ const AuthStackNavigator = () => {
         component={ItemsInReceiptFC}
         options={{ headerShown: false }}
       />
+      <Stack.Screen 
+          name="FridgeScreen"
+          component={FridgeScreen}
+          options={{headerShown: false}}
+      />
       <Stack.Screen
         name="ItemScreen"
         component={ItemScreenFC}
@@ -38,6 +43,7 @@ const AuthStackNavigator = () => {
         component={HealthGoalsScreen}
         options={{ headerShown: false }}
       />
+       
     </Stack.Navigator>
   );
 };

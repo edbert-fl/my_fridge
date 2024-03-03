@@ -1,8 +1,9 @@
-import React from "react";
+import React,{useState} from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Item, ScannerParamList } from "../utils/Types";
 import ProductCard from "./ProductCard";
 import { useNavigation } from "@react-navigation/native";
+import ItemScreen from "../screens/ItemScreen";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 interface ProductListProps {
@@ -20,11 +21,20 @@ const ProductList: React.FC<ProductListProps> = ({ items }) => {
       justAdded: true
     });
   };
-
+  const [itemPressed, setItemPressed] = useState<boolean>(false)
+  const [currentItem, setCurrentItem] = useState([]);
+  if (itemPressed) {
+    return <ItemScreen item={currentItem} setItemPressed={setItemPressed} />
+  }
   return (
     <View>
       {items.map((item) => (
-        <TouchableOpacity key={item.itemID} onPress={() => navigateToItemScreen(item.itemID)}>
+        <TouchableOpacity key={item.itemid} onPress={() => 
+          {
+            setItemPressed(true)
+            setCurrentItem(item)
+        }}
+        >
           <View>
             <ProductCard item={item} />
           </View>
