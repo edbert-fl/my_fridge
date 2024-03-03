@@ -12,10 +12,10 @@ import axios from "axios";
 import { DATABASE_URL } from "../utils/Helpers";
 
 export const ItemScreen = () => {
-  const [products, setProducts] = useState<Item[]>([]);
+  // const [products, setProducts] = useState<Item[]>([]);
 
-  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
+  // const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
+  const [currProduct, setCurrProduct] = useState<Item>();
 
   // TODO: DELETE AFTER
   // const burger: Item = {
@@ -72,7 +72,7 @@ export const ItemScreen = () => {
         art: data.art,
       };
       console.log("Response: ", response);
-      return fetchedProduct;
+      setCurrProduct(fetchedProduct);
     } catch (error) {
       console.log(`Error fetching item: ${error}`);
     }
