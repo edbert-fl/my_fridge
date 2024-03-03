@@ -10,17 +10,6 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ items }) => {
-  const burger: Item = {
-    itemID: 1,
-    receiptID: 1,
-    name: "Hamburger",
-    quantity: 4,
-    weight: null,
-    expiryDate: new Date(),
-    price: 5.2,
-    healthRating: 3,
-    healthComment: "Burgers are not good for you. Eat in moderation.",
-  };
 
   const scannerNavigation =
   useNavigation<StackNavigationProp<ScannerParamList>>();

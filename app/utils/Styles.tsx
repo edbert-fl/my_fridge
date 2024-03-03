@@ -2,7 +2,8 @@ import { Platform, StatusBar, StyleSheet } from "react-native";
 
 export const theme = {
   colors: {
-    primary: "#03C988",
+    primary: "#228B22",
+    secondary: "#6DA7D2",
     accent: "#43537A",
     background: "#FFFFFF",
     outline: "#BBBBBB",

@@ -21,7 +21,8 @@ export interface Item {
   weight: number | null,      // for produce only
   price: number | null,       // price may not be detected
   healthRating: number,       // value from 1 - 10
-  healthComment: string
+  healthComment: string,
+  art: string,
 }
 
 export interface Receipt {
@@ -79,6 +80,15 @@ export type RootStackNavigationProp = StackNavigationProp<
   | "HealthConditions"
   | "AppTabNavigator"
 >;
+
+export type Recipe = {
+  name: string,
+  ingredients: string[],
+  instructions: string,
+  caloriesPerServing: number,
+  servings: number,
+  img: string
+}
 
 export type RootStackRouteProp<RouteName extends keyof RootStackParamList> =
   RouteProp<RootStackParamList, RouteName>;

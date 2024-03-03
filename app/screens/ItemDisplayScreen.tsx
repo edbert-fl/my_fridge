@@ -7,51 +7,9 @@ import ProductList from "../components/ProductList";
 import { theme } from "../utils/Styles";
 import { Item } from "../utils/Types";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { demoItems } from "../utils/Helpers";
 
 export const ItemScreen = () => {
-  const [products, setProducts] = useState<Item[]>([]);
-
-  const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
-
-  // TODO: DELETE AFTER
-  const burger: Item = {
-    itemID: 1,
-    receiptID: 1,
-    name: "Hamburger",
-    quantity: 4,
-    weight: null,
-    expiryDate: new Date(),
-    price: 5.2,
-    healthRating: 3,
-    healthComment: "Burgers are not good for you. Eat in moderation.",
-  };
-
-  const noodle: Item = {
-    itemID: 2,
-    receiptID: 2,
-    name: "Noodle",
-    quantity: 2,
-    weight: null,
-    expiryDate: new Date(),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
-
-  const chicken: Item = {
-    itemID: 3,
-    receiptID: 3,
-    name: "Chicken",
-    quantity: 5,
-    weight: null,
-    expiryDate: new Date(2024, 2, 23),
-    price: 3,
-    healthRating: 4,
-    healthComment: "Noodles are good for you.",
-  };
-
-  const listOfItems: Item[] = [noodle, burger, chicken];
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
@@ -77,19 +35,6 @@ export const ItemScreen = () => {
   //   fetchProducts();
   // }, []);
 
-  const updateSearch = (text: string) => {
-    if (text.valueOf() === "") {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter((product) =>
-        product.name.toLowerCase().includes(search.toLowerCase())
-      );
-      setProducts(filtered);
-    }
-
-    setSearch(text);
-  };
-
   return (
     <View style={styles.background}>
       <AppHeader title={"My Fridge"} />
@@ -99,7 +44,7 @@ export const ItemScreen = () => {
         style={{ backgroundColor: theme.colors.background }}
       >
         {/* TODO: CHANGE THIS TO PRODUCTS/FILTERED PRODUCTS */}
-        <ProductList items={listOfItems} />
+        <ProductList items={demoItems} />
       </ScrollView>
     </View>
   );
