@@ -43,12 +43,13 @@ const Login = () => {
       });
       const userData = response.data.user;
       setCurrUser({
-        userID: userData.userID,
+        userID: userData.userid,
         username: userData.username,
         email: userData.email,
         salt: userData.salt,
         createdAt: new Date(userData.createdAt),
       });
+      console.log(userData);
     } catch (error) {
       alert(`Error signing in ${error}`);
     } finally {
