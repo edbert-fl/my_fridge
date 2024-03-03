@@ -322,7 +322,7 @@ module.exports.initializeRoutes = (app) => {
     const { receiptID } = req.params;
 
     try {
-      const query = `SELECT * FROM Item WHERE receiptID = $1`;
+      const query = `SELECT * FROM Items WHERE receiptID = $1`;
       const { rows } = await pool.query(query, [receiptID]);
       res.json({ items: rows });
     } catch (error) {
@@ -333,10 +333,10 @@ module.exports.initializeRoutes = (app) => {
     }
   });
 
-  app.get("/items/:itemID", async function (req, res) {
+  app.get("/item/:itemID", async function (req, res) {
     const { itemID } = req.params;
     try {
-      const query = `SELECT * FROM Item where itemID = $1`;
+      const query = `SELECT * FROM Items where itemID = $1`;
       const { rows } = await pool.query(query, [itemID]);
       res.json({ item: rows});
     } catch (error) {
@@ -393,7 +393,7 @@ module.exports.initializeRoutes = (app) => {
 
     try {
       // Prepare the query string
-      const query = `INSERT INTO Item (receiptID, name, quantity, expiryDate, weight, price, healthRating, healthComment)
+      const query = `INSERT INTO Items (receiptID, name, quantity, expiryDate, weight, price, healthRating, healthComment)
                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`;
 
       // Prepare an array to hold all inserted items
