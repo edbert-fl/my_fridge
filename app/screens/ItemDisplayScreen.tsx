@@ -7,12 +7,13 @@ import ProductList from "../components/ProductList";
 import { theme } from "../utils/Styles";
 import { Item } from "../utils/Types";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import axios from "axios";
+import { DATABASE_URL } from "../utils/Helpers";
 
 export const ItemScreen = () => {
   const [products, setProducts] = useState<Item[]>([]);
 
   const [filteredProducts, setFilteredProducts] = useState<Item[]>([]);
-  const [search, setSearch] = useState("");
 
   // TODO: DELETE AFTER
   const burger: Item = {
@@ -52,6 +53,38 @@ export const ItemScreen = () => {
   };
 
   const listOfItems: Item[] = [noodle, burger, chicken];
+  const fetchProduct = async (itemID: Number) => {
+    try {
+      const response = await axios.get(`http://${DATABASE_URL}/items/${itemID}`);
+      const data = response.data;
+      const fetchedProduct: Item = {
+        itemID: data.itemID,
+        receiptID: data.receiptID,
+        name: data.name,
+        quantity: data.number,
+        expiryDate: data.expiryDate,
+        weight: data.weight,
+        price: data.price,
+        healthRating: data.healthRating,
+        healthComment: data.healthComment
+      };
+      console.log("Response: ", response);
+      return fetchedProduct;
+    } catch (error) {
+      console.log(`Error fetching item: ${error}`);
+    }
+  };
+  const fetchedProducts: Item[] = []
+  for (const item of listOfItems) {
+    const itemID = item.itemID;
+    fetchProduct(itemID).then((itemDetails) => {
+      if (itemDetails === undefined) {
+        console.log("Item is undefined");
+      }
+      fetchedProducts.push(itemDetails as Item);
+    })
+  }
+  setProducts(fetchedProducts);
 
   // useEffect(() => {
   //   const fetchProducts = async () => {
