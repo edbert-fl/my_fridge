@@ -17,7 +17,7 @@ export interface Item {
   receiptID: number,
   name: string,
   quantity: number,
-  expiryDate: Date,
+  expirydate: Date,
   weight: number | null,      // for produce only
   price: number | null,       // price may not be detected
   healthRating: number,       // value from 1 - 10

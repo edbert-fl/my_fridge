@@ -60,7 +60,7 @@ const HealthGoalsScreen = () => {
         healthConditions: tempCurrUser.healthConditions,
       });
       if (response.data.user) {
-        const userData = response.data.user;
+        const userData =  response.data.user;
         setCurrUser({
           userID: userData.userid,
           username: userData.username,
